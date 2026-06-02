@@ -1,0 +1,293 @@
+/* --- Pywal Import --- */
+@import "/home/geek/.cache/wal/colors.scss";
+
+/* UNIVERSAL SELECTOR */
+window {
+  /* 1. Global Font Settings */
+  font-family: "IosevkaTerm Nerd Font Mono";
+  font-weight: normal;
+  /* 2. The "Nuke" - removes default GTK styling from everything */
+  all: unset;
+  letter-spacing: -1.7px;
+  font-size: 13px;
+  background-color: transparentize($background, 0.3); // rgba(0, 0, 0, 0.6);
+  padding: 0px 25px;
+  margin: 0px 0px;
+  border-top: 0.5px solid $color11;
+}
+
+/* Container */
+.works {
+  margin-right: 0px;
+  padding-right: 8px;
+  padding-left: 8px;
+  border-right: 1px solid $color8;
+}
+
+/* Base style for the box containing the number */
+.ws-btn {
+  font-weight: normal;
+  padding: 0px 2px;
+  /* Adjust padding to fit the text/brackets nicely */
+  margin: 0px 0px;
+  border-radius: 0px;
+  /* Ensure a transparent border exists so layout doesn't jump */
+  border: 1px solid transparent;
+  min-width: 15px;
+  transition: all 0.25s cubic-bezier(0.05, 0.9, 0.1, 1.05);
+}
+
+/* 1. EMPTY: Plain text only */
+.ws-btn.empty {
+  color: $foreground;
+  background-color: transparent;
+}
+
+/* 2. OCCUPIED: Border only */
+.ws-btn.occupied {
+  color: $color4;
+  background-color: transparent;
+  border: 1px solid $color4;
+}
+
+/* 3. CURRENT: Filled color + Brackets */
+.ws-btn.current {
+  color: $background;
+  background-color: $color5;
+  border: 1px solid $color5;
+  font-weight: bold;
+  min-width: 28px;
+}
+
+/* Hover Effect (Optional) */
+.ws-btn:hover {
+  color: $color10;
+}
+
+.ws-btn.current:hover {
+  color: $background;
+}
+
+.right-modules {
+  background-color: transparentize($color8, 0.8);
+  padding-left: 12px;
+  border: 1px solid $color10;
+  border-radius: 0px;
+  color: $foreground;
+}
+.hardware-group {
+  background-color: transparentize($color8, 0.6);
+  border-radius: 3px; /* Creates the pill shape */
+  padding: 4px 12px;
+  margin: 0px 5px;
+}
+
+.cpu-label, .ram-label {
+  border-left: 1px solid $color13;
+  border: none; 
+  padding: 0px 5px;
+}
+
+.module-volume {
+  padding: 0px 0px;
+  padding-right: 10px;
+  border-right: 1px dashed $color13;
+}
+
+.center {
+  background-color: transparentize($color3, 0.5);
+  padding: 0px 4px;
+  color: #fafafa;
+}
+
+.center-clock {
+  background-color: transparentize($color3, 0.78);
+  /* Background restored */
+  padding: 0px 4px;
+  color: #fafafa;
+}
+
+.volbar {
+  all: unset;
+  padding: 0px 10px;
+  min-width: 100px;
+}
+
+.volbar trough {
+  min-height: 4px;
+  min-width: 100px;
+  border-radius: 10px;
+  background-color: transparentize($color8, 0.5);
+  margin-left: 10px;
+  margin-right: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.volbar highlight {
+  border-radius: 10px;
+  background-color: $color5;
+}
+
+.vol-label {
+  min-width: 80px;
+}
+
+tooltip {
+  background-color: $background;
+  border: 1px solid $color5;
+  border-radius: 4px;
+  color: $foreground;
+  font-size: 12px;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+.cal-box {
+  background-color: $background;
+  border: 1px solid $color5;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cal {
+  padding: 5px;
+  font-family: "JetBrainsMono Nerd Font Mono";
+  font-weight: normal;
+  color: $foreground;
+}
+
+.cal .header {
+  color: $color6;
+  font-weight: bold;
+}
+
+.cal:selected {
+  color: $background;
+  background-color: $color5;
+  border-radius: 3px;
+}
+
+.cal:hover {
+  background-color: transparentize($color5, 0.5);
+  border-radius: 3px;
+}
+
+.music-minimal {
+  color: $foreground;
+  padding-right: 10px;
+  margin-right: 0px;
+  margin-left: 0px;
+  border-right: 1px solid $color8;
+}
+
+.music-minimal.playing {
+  color: $color4;
+}
+
+cal-box,
+.music-box {
+  background-color: $background;
+  border: 1px solid $color5;
+  border-radius: 4px;
+  padding: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Calendar Specifics */
+.cal {
+  padding: 5px;
+  font-family: "JetBrainsMono Nerd Font Mono";
+  font-weight: normal;
+  color: $foreground;
+}
+
+.cal .header {
+  color: $color6;
+  font-weight: bold;
+}
+
+.cal:selected {
+  color: $background;
+  background-color: $color5;
+  border-radius: 3px;
+}
+
+.cal:hover {
+  background-color: transparentize($color5, 0.5);
+  border-radius: 3px;
+}
+
+/* --- MUSIC POPUP SPECIFICS --- */
+.music-box {
+  padding: 20px;
+  background-image: linear-gradient(to bottom right, $background, transparentize($color1, 0.8));
+  border: 1px solid $color4;
+}
+
+.music-art {
+  min-width: 100px;
+  min-height: 100px;
+  border-radius: 12px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 2px solid $color8;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.music-title {
+  font-weight: bold;
+  font-size: 18px;
+  color: $color5;
+  margin-top: 5px;
+  margin-bottom: 2px;
+}
+
+.music-artist {
+  font-size: 13px;
+  color: transparentize($foreground, 0.4);
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+/* Custom Buttons (Removed GTK look) */
+.music-controls button {
+  all: unset;
+  /* Removes all default GTK styling */
+  color: $foreground;
+  font-size: 26px;
+  padding: 0px 10px;
+  background-color: transparent;
+  transition: all 0.2s;
+}
+
+.music-controls button:hover {
+  color: $color4;
+  text-shadow: 0px 0px 5px $color4;
+}
+
+.music-bar trough {
+  min-height: 6px;
+  min-width: 180px;
+  border-radius: 10px;
+  background-color: transparentize($color8, 0.6);
+  margin-top: 15px;
+}
+
+.music-bar highlight {
+  border-radius: 10px;
+  background-color: $color4;
+  box-shadow: 0px 0px 5px $color4;
+}
+
+.music-bar-text {
+  background-color: transparentize($color4, 0.7);
+  border: 0.8px solid $color4;
+  box-shadow: 0px 0px 10px transparentize($color4, 0.1);
+  color: $color7;
+  padding: 0px 5px;
+}

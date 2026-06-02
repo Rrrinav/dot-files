@@ -1,0 +1,29 @@
+# Global settings (applies to all files)
+SemanticTokens:
+  DisabledKinds: []
+  DisabledModifiers: []
+
+---
+# C++ files
+If:
+  PathMatch: [.*\.cpp, .*\.hpp, .*\.ixx, .*\.cppm]
+CompileFlags:
+  Add:
+    - "-std=c++26"
+
+---
+# C files
+If:
+  PathMatch: [.*\.c, .*\.h]
+CompileFlags:
+  Add:
+    - "-std=c23"
+
+---
+# Module files
+If:
+  PathMatch: .*\.cppm
+CompileFlags:
+  Add: 
+    - -x
+    - c++-module

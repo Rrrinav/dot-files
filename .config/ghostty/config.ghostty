@@ -1,0 +1,32 @@
+# Colors (pywal generated — do not edit this line's target manually)
+config-file = /home/geek/.cache/wal/colors-ghostty.conf
+
+custom-shader = shaders/cursor_trail.glsl
+# ...
+# Font
+# font-family = "IosevkaTerm NF Regular"
+font-family = 'JetBrainsMono NFP ExtraLight'
+font-size = 12
+
+font-synthetic-style = false
+
+# Cursor
+cursor-style = bar
+shell-integration-features = no-cursor
+
+# Window / Opacity
+background-opacity = 0.85
+
+# Ligatures
+font-feature = -liga
+font-feature = -calt
+font-feature = -dlig
+
+# Window Padding
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = false
+
+# Spacing
+adjust-cell-height = 0
+adjust-cell-width = 0

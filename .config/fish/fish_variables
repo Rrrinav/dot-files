@@ -1,0 +1,7 @@
+# This file contains fish universal variable definitions.
+# VERSION: 3.0
+SETUVAR --export EDITOR:nvim
+SETUVAR --export GEMINI_API_KEY:AIzaSyCARTqzsifo6LIF\x2dQaqrPABfzZxLNL7lZs
+SETUVAR __fish_initialized:4300
+SETUVAR fish_greeting:\x1d
+SETUVAR fish_user_paths:/home/geek/\x2elocal/opt/nvim/nvim\x2dlinux\x2dx86_64/bin\x1e/home/geek/\x2elocal/bin
