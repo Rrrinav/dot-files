@@ -8,14 +8,16 @@ local function wal_color(index)
   if not f then return nil end
   local i, line = 0, nil
   for l in f:lines() do
-    if i == index then line = l; break end
+    if i == index then
+      line = l; break
+    end
     i = i + 1
   end
   f:close()
   return line and ("rgb(" .. line:gsub("#", "") .. ")") or nil
 end
 
-local color4  = wal_color(4)  or "rgb(89b4fa)"
+local color4  = wal_color(4) or "rgb(89b4fa)"
 local color10 = wal_color(10) or "rgb(a6e3a1)"
 
 -- MONITOR
@@ -52,7 +54,7 @@ hl.config({
     kb_options   = "compose:ralt",
     follow_mouse = 1,
     sensitivity  = 0,
-    touchpad = {
+    touchpad     = {
       natural_scroll = true,
     },
   },
@@ -61,7 +63,7 @@ hl.config({
     gaps_in          = 2,
     gaps_out         = 2,
     border_size      = 1,
-    col = {
+    col              = {
       active_border   = color4, --.. " " .. color10 .. " 45deg",
       inactive_border = "rgba(afafaf5f)",
     },
@@ -74,7 +76,7 @@ hl.config({
     rounding         = 0,
     active_opacity   = 1.0,
     inactive_opacity = 0.9,
-    blur = {
+    blur             = {
       enabled           = true,
       size              = 3,
       passes            = 3,
@@ -94,12 +96,12 @@ hl.config({
 })
 
 -- ANIMATIONS  (separate from hl.config in 0.55+)
-hl.curve("myBezier", { type = "bezier", points = { {0.05, 0.9}, {0.1, 1.05} } })
+hl.curve("myBezier", { type = "bezier", points = { { 0.05, 0.9 }, { 0.1, 1.05 } } })
 
-hl.animation({ leaf = "windows",    enabled = true, speed = 2, bezier = "myBezier" })
+hl.animation({ leaf = "windows", enabled = true, speed = 2, bezier = "myBezier" })
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 2, bezier = "default", style = "popin 80%" })
-hl.animation({ leaf = "border",     enabled = true, speed = 2, bezier = "default" })
-hl.animation({ leaf = "fade",       enabled = true, speed = 4, bezier = "default" })
+hl.animation({ leaf = "border", enabled = true, speed = 2, bezier = "default" })
+hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "default", style = "slide" })
 
 -- PER-DEVICE CONFIG
@@ -121,23 +123,23 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 
 -- KEYBINDS
 -- Apps
-hl.bind(mainMod .. " + Q",      hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + C",      hl.dsp.window.kill())
-hl.bind(mainMod .. " + M",      hl.dsp.exec_cmd("hyprshutdown"))
-hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R",      hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
+hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + C", hl.dsp.window.kill())
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprshutdown"))
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout"))
-hl.bind(mainMod .. " + W",      hl.dsp.exec_cmd(
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(
   'sh ' .. HOME .. '/.local/bin/pywal.sh | dunstify "Select wallpapers" -t 1000'
 ))
 
 -- ── Focus movement ───────────────────────────────────────────
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "l" }))
+hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "l" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "r" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "u" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "d" }))
+hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "u" }))
+hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "d" }))
 
 -- Window swapping (vim keys)
 hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.swap({ direction = "l" }))
@@ -147,13 +149,13 @@ hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.swap({ direction = "u" }))
 
 -- ── Workspaces 1–10 ─────────────────────────────────────────
 for i = 1, 9 do
-  hl.bind(mainMod .. " + " .. i,         hl.dsp.focus({
+  hl.bind(mainMod .. " + " .. i, hl.dsp.focus({
     workspace = i,
     on_current_monitor = true
   }))
   hl.bind(mainMod .. " + SHIFT + " .. i, hl.dsp.window.move({ workspace = i, follow = true }))
 end
-hl.bind(mainMod .. " + 0",         hl.dsp.focus({ workspace = 10 }))
+hl.bind(mainMod .. " + 0", hl.dsp.focus({ workspace = 10 }))
 hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }))
 
 -- Mouse: move / resize windows (drag binds)
@@ -161,15 +163,58 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag());
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize())
 
 -- ── Brightness ──────────────────────────────────────────────
--- No leading comma needed for function keys in Lua
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(HOME .. "/.local/bin/brightness.sh down"))
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(HOME .. "/.local/bin/brightness.sh up"))
+local function brightness(step)
+  return hl.dsp.exec_cmd(
+    string.format(
+      'brightnessctl set %s; p=$(brightnessctl -m | cut -d, -f4 | tr -d "%%"); dunstify -h int:value:$p -r 9991 "Brightness" "$p%%"',
+      step
+    )
+  )
+end
+
+hl.bind("XF86MonBrightnessUp", brightness("+2%"))
+hl.bind("XF86MonBrightnessDown", brightness("2%-"))
 
 -- ── Volume / Audio ──────────────────────────────────────────
-hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd(HOME .. "/.local/bin/volume.sh up"))
-hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd(HOME .. "/.local/bin/volume.sh down"))
-hl.bind("XF86AudioMute",         hl.dsp.exec_cmd(HOME .. "/.local/bin/volume.sh mute"))
-hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd(HOME .. "/.local/bin/mic.sh"))
+local function notify_cmd(cmd, title, replace_id, value_cmd)
+  return hl.dsp.exec_cmd(string.format(
+    '%s; p=$(%s); dunstify -h int:value:$p -r %d "%s" "$p%%"',
+    cmd,
+    value_cmd,
+    replace_id,
+    title
+  ))
+end
+
+-- Volume
+hl.bind("XF86AudioRaiseVolume",
+  notify_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+", "Volume", 9992,
+    [[wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)}']]))
+hl.bind("XF86AudioLowerVolume",
+  notify_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-", "Volume", 9992,
+    [[wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)}']]))
+
+local function cmd_output(cmd)
+  local f = assert(io.popen(cmd))
+  local out = f:read("*a")
+  f:close()
+  return out
+end
+
+local function toggle_speaker()
+  os.execute("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+  local muted = cmd_output("wpctl get-volume @DEFAULT_AUDIO_SINK@"):find("%[MUTED%]") ~= nil
+  os.execute(('dunstify -r 9992 "Volume" "%s"'):format(muted and "Muted" or "Unmuted"))
+end
+
+local function toggle_mic()
+  os.execute("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
+  local muted = cmd_output("wpctl get-volume @DEFAULT_AUDIO_SOURCE@"):find("%[MUTED%]") ~= nil
+  os.execute(('dunstify -r 9993 "Microphone" "%s"'):format(muted and "Muted" or "Unmuted"))
+end
+
+hl.bind("XF86AudioMute", toggle_speaker)
+hl.bind("XF86AudioMicMute", toggle_mic)
 
 -- ── Misc ─────────────────────────────────────────────────────
 hl.bind("SHIFT + F4", hl.dsp.exec_cmd(HOME .. "/.local/bin/toggle_bar.sh"))
@@ -187,14 +232,14 @@ hl.bind("SHIFT + Print", hl.dsp.exec_cmd(
 
 -- ── Clipboard / Window switcher ──────────────────────────────
 hl.bind("ALT + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
-hl.bind("ALT + Tab",       hl.dsp.exec_cmd(HOME .. "/.local/bin/rofi-windows.sh"))
+hl.bind("ALT + Tab", hl.dsp.exec_cmd(HOME .. "/.local/bin/rofi-windows.sh"))
 
 -- ── Resize submap ────────────────────────────────────────────
 hl.bind("ALT + R", hl.dsp.submap("resize"))
 hl.define_submap("resize", function()
-  hl.bind("right",  hl.dsp.window.resize({ x =  10, y =   0, relative = true }), { repeating = true })
-  hl.bind("left",   hl.dsp.window.resize({ x = -10, y =   0, relative = true }), { repeating = true })
-  hl.bind("up",     hl.dsp.window.resize({ x =   0, y = -10, relative = true }), { repeating = true })
-  hl.bind("down",   hl.dsp.window.resize({ x =   0, y =  10, relative = true }), { repeating = true })
+  hl.bind("right", hl.dsp.window.resize({ x = 10, y = 0, relative = true }), { repeating = true })
+  hl.bind("left", hl.dsp.window.resize({ x = -10, y = 0, relative = true }), { repeating = true })
+  hl.bind("up", hl.dsp.window.resize({ x = 0, y = -10, relative = true }), { repeating = true })
+  hl.bind("down", hl.dsp.window.resize({ x = 0, y = 10, relative = true }), { repeating = true })
   hl.bind("escape", hl.dsp.submap("reset"))
 end)

@@ -14,7 +14,7 @@ require("config.filetypes")
 require("config.keymaps")
 require("config.autocmds")
 
-vim.cmd.colorscheme("nord")
+vim.cmd.colorscheme("onedark")
 
 require("statusline").setup()
 require("tabline").setup()
@@ -22,8 +22,8 @@ require("custom.swap_words").setup()
 require("custom.compile_mode").setup()
 require("custom.frecency_tab.init").setup({
   keymaps = {
-    open         = "<leader>ts",
-    open_reverse = "<leader>tS",
+    open         = "<leader>bs",
+    open_reverse = "<leader>bS",
   },
   persist_path = vim.fn.stdpath("data") .. "/frecency_tab.dat",
 })
@@ -31,5 +31,5 @@ require("custom.frecency_tab.init").setup({
 require("config.set-highlights").setup()
 
 vim.notify("Hello Rinav", vim.log.levels.INFO, {
-  title = "Sukhoi  "
+  title = "MIG-29 󱜿 "
 })

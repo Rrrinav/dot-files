@@ -3,6 +3,22 @@
 local M = {}
 
 M.themes = {
+  transparent = {
+    bg           = "none",
+    fg           = "#d0d0d0",
+    fg1          = "#b8b8b8",
+    fg2          = "#909090",
+    subtle       = "#7a7a7a",
+    dim_plumbing = "#444444",
+    string_pop   = "#88a888",
+    error        = "#cc6666",
+    warn         = "#d4b261",
+    info         = "#8aa6c1",
+    hint         = "#88a888",
+    git_add      = "#88a888",
+    git_change   = "#d4b261",
+    git_delete   = "#cc6666",
+  },
   -- Neutral Themes
   almost_black = {
     bg           = "#0d0d0d",
@@ -690,6 +706,7 @@ M.themes = {
 
 -- Active State
 M.colors = vim.deepcopy(M.themes.nord2)
+M.colors = vim.deepcopy(M.themes.transparent)
 
 -- Static Elements
 M.static = {

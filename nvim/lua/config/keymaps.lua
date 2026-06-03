@@ -32,8 +32,6 @@ map("n", "<leader>bo", function()
   end
 end, { desc = "Buffer: close others" })
 
-map("n", "<leader>bs", "<Cmd>ArenaOpen<cr>", { desc = "Buffer: arena frecency" })
-
 -- <leader>t → tab page operations only
 -- gt / gT: next/prev (native Vim, no conflict with blink or multicursor)
 

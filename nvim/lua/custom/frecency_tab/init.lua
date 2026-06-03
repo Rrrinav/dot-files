@@ -8,8 +8,8 @@ local ui       = require("custom.frecency_tab.ui")
 
 local defaults = {
   keymaps = {
-    open         = "<leader>ts",
-    open_reverse = "<leader>tS",
+    open         = "<leader>bs",
+    open_reverse = "<leader>bS",
   },
   persist_path = vim.fn.stdpath("data") .. "/frecency_tab.dat",
 }

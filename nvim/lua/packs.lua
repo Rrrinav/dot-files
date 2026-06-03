@@ -44,6 +44,7 @@ vim.pack.add({
   { src = gh('chentoast/marks.nvim')                                            },
   { src = gh('karb94/neoscroll.nvim')                                           },
   { src = gh('lukas-reineke/indent-blankline.nvim')                             },
+  { src = gh('brenoprata10/nvim-highlight-colors')                              },
 })
 
 vim.api.nvim_create_autocmd("PackChanged", {

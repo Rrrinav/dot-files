@@ -35,7 +35,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
         { "<leader>b",  group = "Buffers" },
         { "<leader>bd", desc = "Close buffer safely" },
         { "<leader>bo", desc = "Close other buffers" },
-        { "<leader>bs", desc = "Arena frecency selector" },
 
         -- ── Tabs ────────────────────────────────────────────────────────────
         { "<leader>t",  group = "Tabs" },
