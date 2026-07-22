@@ -29,14 +29,24 @@ local state = {
 }
 
 local function clean_ansi(s)
-  return s:gsub("\27%[[%d;]*[A-Za-z]", "")
+  -- Removes standard CSI escapes (colors), OSC hyperlinks, and mode switches
+  s = s:gsub("\27%[[%d;]*[a-zA-Z]", "")
+  s = s:gsub("\27%]8;;.-\27\\", "")
+  s = s:gsub("\27%[%?%d+[hl]", "")
+  return s
 end
 
 local function classify(t)
+  if not t or t == "" then return "I" end
   local lo = t:lower()
-  if lo:match("err") or lo:match("fatal") then return "E" end
+  if lo:match("err") or lo:match("fatal") or lo:match("panic") or lo:match("exception") then return "E" end
   if lo:match("warn") then return "W" end
   return "I"
+end
+
+local function is_absolute(path)
+  -- Supports Unix absolute paths (/) and Windows drives (C:\ or C:/)
+  return path:match("^/") or path:match("^%a:[/\\]")
 end
 
 ---@class CompileLocation
@@ -44,19 +54,74 @@ end
 ---@field lnum integer
 ---@field col integer
 
+-- Diverse pattern array covering majority of toolchains
+local patterns = {
+  -- 1. Standard (GCC, Clang, Go, TypeScript): file:10:5: error: msg
+  { pat = "^%s*(.-):(%d+):(%d+):%s*(.*)",         f = 1, l = 2, c = 3,   m = 4 },
+  -- 2. Standard no col: file:10: error: msg
+  { pat = "^%s*(.-):(%d+):%s*(.*)",               f = 1, l = 2, c = nil, m = 3 },
+  -- 3. MSVC / C# / MSBuild: file(10,5): error: msg
+  { pat = "^%s*(.-)%((%d+),(%d+)%)%s*:%s*(.*)",   f = 1, l = 2, c = 3,   m = 4 },
+  -- 4. MSVC no col: file(10): error: msg
+  { pat = "^%s*(.-)%((%d+)%)%s*:%s*(.*)",         f = 1, l = 2, c = nil, m = 3 },
+  -- 5. Rust: --> src/main.rs:12:3
+  { pat = "^%s*-->%s*(.-):(%d+):(%d+)",           f = 1, l = 2, c = 3,   m = nil },
+  -- 6. Python tracebacks: File "main.py", line 10, in <module>
+  { pat = '^%s*File%s+"([^"]+)",%s*line%s*(%d+)', f = 1, l = 2, c = nil, m = nil },
+  -- 7. Node.js stack trace: at Object.func (/path/to/file.js:10:5)
+  { pat = "^%s*at%s+.-%((.-):(%d+):(%d+)%)",      f = 1, l = 2, c = 3,   m = nil },
+  -- 8. Node.js bare stack trace: at /path/to/file.js:10:5
+  { pat = "^%s*at%s+(.-):(%d+):(%d+)",            f = 1, l = 2, c = 3,   m = nil },
+  -- 9. Node.js bare file path top-level: /path/to/file.js:1
+  { pat = "^([/a-zA-Z~].-):(%d+):?(%d*)%s*$",     f = 1, l = 2, c = 3,   m = nil },
+}
+
 ---@return string?, integer?, integer?, string?, integer?
 local function parse_line(line)
-  -- Regex 1: file:line:col: severity: msg
-  local pfx, f, l, c, t = line:match("^(([^:]+):(%d+):(%d+):%s*(%a+):%s*).*$")
-  if pfx then return f, tonumber(l) or 0, tonumber(c) or 0, classify(t), #pfx end
+  for _, p in ipairs(patterns) do
+    local s_idx, e_idx, c1, c2, c3, c4 = line:find(p.pat)
+    if s_idx then
+      local caps = { c1, c2, c3, c4 }
+      local f = caps[p.f]
+      local l = tonumber(caps[p.l]) or 0
+      local c = p.c and tonumber(caps[p.c]) or 0
+      local m = p.m and caps[p.m] or ""
 
-  -- Regex 2: file:line:col: msg
-  local pfx2, f2, l2, c2, m2 = line:match("^(([^:]+):(%d+):(%d+):%s*)(.*)$")
-  if pfx2 then return f2, tonumber(l2) or 0, tonumber(c2) or 0, classify(m2), #pfx2 end
+      if f and not f:match("^%s*$") then
+        return f, l, c, classify(m), e_idx
+      end
+    end
+  end
 
-  -- Regex 3: file:line: msg
-  local pfx3, f3, l3, m3 = line:match("^(([^:]+):(%d+):%s*)(.*)$")
-  if pfx3 then return f3, tonumber(l3) or 0, 0, classify(m3), #pfx3 end
+  -- Fallback: Catch raw exception/error names (like "ReferenceError:")
+  -- so they get highlighted even if they don't have an attached file path.
+  if line:match("^[A-Z]%a*Error:") or line:match("^[Ee]rror:") or line:match("^panic:") then
+    return nil, 0, 0, "E", #line
+  end
+
+  return nil
+end
+
+---@return string?, integer?, integer?, string?, integer?
+local function parse_line(line)
+  for _, p in ipairs(patterns) do
+    local s_idx, e_idx, c1, c2, c3, c4 = line:find(p.pat)
+    if s_idx then
+      local caps = { c1, c2, c3, c4 }
+      local f = caps[p.f]
+      local l = tonumber(caps[p.l]) or 0
+      local c = p.c and tonumber(caps[p.c]) or 0
+      local m = p.m and caps[p.m] or ""
+
+      -- Basic sanity check to avoid matching random text as files
+      if f and not f:match("^%s*$") then
+        -- Return file, line, col, severity, and prefix length for highlighting
+        -- If no message is captured (e.g., Rust/Python), default to Info
+        return f, l, c, classify(m), e_idx
+      end
+    end
+  end
+  return nil
 end
 
 local function set_status(text, hl)
@@ -105,11 +170,11 @@ local function ensure_buf()
   return buf
 end
 
--- Custom folding logic
+-- Custom folding logic updated for new patterns
 _G._compile_foldexpr = function(lnum)
   local line = vim.fn.getline(lnum)
   if line:match("^$") then return "0" end
-  if line:match("^[^:]+:%d+:") then return ">1" end
+  if parse_line(line) then return ">1" end
   if line:match("^%s") then return "1" end
   return "0"
 end
@@ -214,13 +279,24 @@ local function on_output(_, data)
       table.insert(lines, clean)
 
       local f, l, c, t, pfx_len = parse_line(clean)
+
       if f then
-        if not f:match("^/") then f = state.cwd .. "/" .. f end
+        if not is_absolute(f) then f = state.cwd .. "/" .. f end
+        f = vim.fs.normalize(f)
+
         local hl_map = { E = "error", W = "warning", I = "info" }
         table.insert(hls, {
           hl = M.config.highlights[hl_map[t]],
           len = pfx_len,
           item = { file = f, lnum = l, col = c }
+        })
+      elseif t then
+        -- It is a standalone Error/Panic string (no file to jump to, but needs color)
+        local hl_map = { E = "error", W = "warning", I = "info" }
+        table.insert(hls, {
+          hl = M.config.highlights[hl_map[t]],
+          len = pfx_len,
+          item = nil -- Not jumpable
         })
       else
         table.insert(hls, false)
@@ -271,7 +347,7 @@ local function run(cmd)
   })
 
   pcall(vim.api.nvim_buf_set_extmark, state.buf, state.ns, 1, 0, {
-    end_col = #cmd + 2,
+    end_col = #("$ ▎" .. cmd),
     hl_group = M.config.highlights.cmd,
     strict = false
   })

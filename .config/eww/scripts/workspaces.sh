@@ -33,7 +33,7 @@ generate_workspaces() {
             class="current"
         fi
 
-        echo -n "(eventbox :cursor \"pointer\" :onclick \"hyprctl dispatch workspace $i\" (box :class \"ws-btn $class\" :valign \"center\" (label :text \"$i\" :halign \"center\" :valign \"center\")))"
+        echo -n "(eventbox :cursor \"pointer\" :onclick \"hyprctl dispatch 'hl.dsp.focus({ workspace = $i })'\" (box :class \"ws-btn $class\" :valign \"center\" (label :text \"$i\" :halign \"center\" :valign \"center\")))"
     done
 
     echo ")"

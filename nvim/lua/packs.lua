@@ -16,7 +16,7 @@ vim.pack.add({
   { src = gh('vhyrro/luarocks.nvim')                                            },
   { src = gh('nvim-tree/nvim-web-devicons')                                     },
   { src = gh('stevearc/oil.nvim')                                               },
-  { src = gh('nvim-mini/mini.nvim'), version = '*'                              },
+  { src = gh('echasnovski/mini.nvim'), version = '*'                              },
   { src = gh('folke/snacks.nvim')                                               },
   { src = gh('saghen/blink.cmp'),    version = vim.version.range('*')           },
   { src = gh("nvim-treesitter/nvim-treesitter")                                 },

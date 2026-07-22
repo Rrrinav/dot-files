@@ -4,8 +4,8 @@ config-file = /home/geek/.cache/wal/colors-ghostty.conf
 custom-shader = shaders/cursor_trail.glsl
 # ...
 # Font
-# font-family = "IosevkaTerm NF Regular"
-font-family = 'JetBrainsMono NFP ExtraLight'
+font-family = "IosevkaTerm NF Regular"
+#font-family = 'JetBrainsMono NFP ExtraLight'
 font-size = 12
 
 font-synthetic-style = false

@@ -30,7 +30,7 @@ function M.setup()
 
 
   vim.opt.fillchars = {
-    eob       = "~", -- Replace `~` with space on empty lines
+    eob       = " ", -- Replace `~` with space on empty lines
     fold      = " ", -- Clean folding markers
     vert      = "│", -- Vertical separator
     horiz     = "─", -- Horizontal separator

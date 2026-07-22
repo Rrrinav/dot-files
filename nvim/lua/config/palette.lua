@@ -705,8 +705,7 @@ M.themes = {
 }
 
 -- Active State
-M.colors = vim.deepcopy(M.themes.nord2)
-M.colors = vim.deepcopy(M.themes.transparent)
+M.colors = vim.deepcopy(M.themes.kanagawa_dragon2)
 
 -- Static Elements
 M.static = {

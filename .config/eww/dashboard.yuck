@@ -1,0 +1,108 @@
+;; ============================================================
+;;                      DASHBOARD VARIABLES
+;; ============================================================
+
+(defpoll net_status   :interval "5s"  "~/.config/eww/scripts/dash/network.sh")
+(defpoll bt_status     :interval "5s"  "~/.config/eww/scripts/dash/bluetooth.sh")
+(defpoll brightness    :interval "1s"  "~/.config/eww/scripts/dash/brightness.sh")
+(defpoll disk_usage    :interval "30s" "~/.config/eww/scripts/dash/disk.sh")
+(defpoll uptime_str    :interval "60s" "~/.config/eww/scripts/dash/uptime.sh")
+(defpoll cpu_temp      :interval "5s"  "~/.config/eww/scripts/dash/cpu_temp.sh")
+(defpoll user_name     :interval "1h"  "whoami")
+(defpoll host_name     :interval "1h"  "hostname")
+
+;; ============================================================
+;;                      REUSABLE WIDGETS
+;; ============================================================
+
+;; Horizontal stat bar: icon + label, animated fill track, percent value
+(defwidget stat_bar [icon label value color]
+    (box :class "stat-row" :orientation "h" :space-evenly false :spacing 8
+        (label :class "stat-icon" :text icon)
+        (box :orientation "v" :space-evenly false :spacing 2 :hexpand true
+            (box :orientation "h" :space-evenly false
+                (label :class "stat-label" :text label :halign "start" :hexpand true)
+                (label :class "stat-value" :text "${round(value, 0)}%" :halign "end"))
+            (box :class "stat-bar-track"
+                (box :class "stat-bar-fill" :style "background-color: ${color}; min-width: ${round(value * 1.6, 0)}px;")))))
+
+;; Quick-toggle pill button (wifi / bluetooth / dnd)
+(defwidget toggle_pill [icon label active onclick]
+    (eventbox :cursor "pointer" :onclick onclick
+        (box :class "toggle-pill ${active ? "active" : ""}" :orientation "v" :space-evenly false :spacing 2 :halign "center"
+            (label :class "toggle-icon" :text icon)
+            (label :class "toggle-label" :text label))))
+
+;; Power menu button
+(defwidget power_btn [icon tooltip onclick]
+    (eventbox :cursor "pointer" :onclick onclick :tooltip tooltip
+        (box :class "power-btn" :halign "center" :valign "center"
+            (label :text icon))))
+
+;; ============================================================
+;;                        DASHBOARD LAYOUT
+;; ============================================================
+
+(defwidget dashboard_widget []
+    (box :class "dashboard" :orientation "v" :space-evenly false :spacing 14
+
+        ;; --- Header: greeting + clock ---
+        (box :class "dash-header" :orientation "h" :space-evenly false
+            (box :orientation "v" :space-evenly false :halign "start" :hexpand true
+                (label :class "dash-greeting" :text "${user_name}@${host_name}" :halign "start")
+                (label :class "dash-uptime" :text "up ${uptime_str}" :halign "start"))
+            (box :orientation "v" :space-evenly false :halign "end"
+                (label :class "dash-time" :text time :halign "end")
+                (label :class "dash-date" :text date :halign "end")))
+
+        ;; --- System stats ---
+        (box :class "dash-section" :orientation "v" :space-evenly false :spacing 8
+            (stat_bar :icon "" :label "CPU" :value {EWW_CPU.avg} :color "$color4")
+            (stat_bar :icon "" :label "RAM" :value {EWW_RAM.used_mem_perc} :color "$color5")
+            (stat_bar :icon "" :label "Disk" :value {disk_usage != "" ? disk_usage : 0} :color "$color6")
+            (box :class "stat-row" :orientation "h" :space-evenly false :spacing 8
+                (label :class "stat-icon" :text "")
+                (label :class "stat-label" :text "Temp" :hexpand true :halign "start")
+                (label :class "stat-value" :text "${cpu_temp}°C" :halign "end")))
+
+        ;; --- Quick toggles ---
+        (box :class "dash-section toggles" :orientation "h" :space-evenly true :spacing 8
+            (toggle_pill :icon "" :label net_status :active {net_status != " Disconnected"}
+                :onclick "nmtui &")
+            (toggle_pill :icon "" :label "${bt_status == "on" ? "Bluetooth" : "Off"}" :active {bt_status == "on"}
+                :onclick "~/.config/eww/scripts/dash/bluetooth_toggle.sh")
+            (toggle_pill :icon "" :label "Files" :active false
+                :onclick "xdg-open ~ &"))
+
+        ;; --- Sliders: brightness + volume ---
+        (box :class "dash-section" :orientation "v" :space-evenly false :spacing 10
+            (box :orientation "h" :space-evenly false :spacing 8
+                (label :class "slider-icon" :text "")
+                (scale :class "dash-slider" :orientation "h" :hexpand true
+                    :value {brightness != "" ? brightness : 0} :min 0 :max 100
+                    :onchange "brightnessctl set {}% "))
+            (box :orientation "h" :space-evenly false :spacing 8
+                (eventbox :cursor "pointer" :onclick "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+                    (label :class "slider-icon" :text ""))
+                (scale :class "dash-slider" :orientation "h" :hexpand true
+                    :value {volume_percent} :min 0 :max 100
+                    :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%")))
+
+        ;; --- Power menu ---
+        (box :class "dash-section power-row" :orientation "h" :space-evenly true
+            (power_btn :icon "" :tooltip "Lock" :onclick "hyprlock &")
+            (power_btn :icon "" :tooltip "Suspend" :onclick "systemctl suspend")
+            (power_btn :icon "" :tooltip "Logout" :onclick "hyprctl dispatch 'hl.dsp.exit()'")
+            (power_btn :icon "" :tooltip "Reboot" :onclick "systemctl reboot")
+            (power_btn :icon "" :tooltip "Shutdown" :onclick "systemctl poweroff"))))
+
+;; ============================================================
+;;                        DASHBOARD WINDOW
+;; ============================================================
+
+(defwindow dashboard
+    :monitor 0
+    :geometry (geometry :x "10px" :y "35px" :width "300px" :height "480px" :anchor "bottom right")
+    :stacking "fg"
+    :windowtype "dialog"
+    (dashboard_widget))

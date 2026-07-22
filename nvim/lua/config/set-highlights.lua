@@ -14,6 +14,30 @@ local function derive()
   }
 end
 
+local function apply_bg(group, bg_color)
+  local old = vim.api.nvim_get_hl(0, { name = group })
+
+  -- Construct a fresh table to appease LuaLS and strip internal metadata
+  ---@type vim.api.keyset.highlight
+  local new_hl = {
+    fg = old.fg,
+    bg = bg_color, -- Inject our new background
+    sp = old.sp,
+    bold = old.bold,
+    italic = old.italic,
+    underline = old.underline,
+    undercurl = old.undercurl,
+    underdouble = old.underdouble,
+    underdotted = old.underdotted,
+    underdashed = old.underdashed,
+    strikethrough = old.strikethrough,
+    reverse = old.reverse,
+    nocombine = old.nocombine,
+  }
+
+  vim.api.nvim_set_hl(0, group, new_hl)
+end
+
 local function build_groups(p, s, d)
   local hl                                   = {}
 
@@ -37,6 +61,7 @@ local function build_groups(p, s, d)
   hl["PmenuSel"]                             = { bg = s.cursor_line, fg = p.string_pop, bold = true }
   hl["PmenuSbar"]                            = { bg = p.bg }
   hl["PmenuThumb"]                           = { bg = p.dim_plumbing }
+  apply_bg("PmenuKind", p.bg);
 
   -- LSP Semantic Modifiers
   hl["@lsp.typemod.method.defaultLibrary"]   = { link = "@function" }
