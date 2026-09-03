@@ -28,6 +28,10 @@ for src_path, dst_dir in paths:
     src = Path(src_path).expanduser()
     dst_dir = Path(dst_dir)
 
+    if not src.exists():
+        print(f"Skipping: {src}: Doesn't exist")
+        continue
+
     dst = dst_dir / src.name
 
     dst.parent.mkdir(parents=True, exist_ok=True)

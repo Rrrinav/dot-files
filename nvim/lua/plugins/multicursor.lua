@@ -43,8 +43,7 @@ set("v", "<A-T>", function() mc.transposeCursors(-1) end, { desc = "mc: transpos
 set("n", "<C-LeftMouse>", mc.handleMouse, { desc = "mc: click add cursor" })
 
 -- ── Jumplist ───────────────────────────────────────────────────────────
-set({ "v", "n" }, "<C-i>", mc.jumpForward, { desc = "mc: jump forward" })
-set({ "v", "n" }, "<C-o>", mc.jumpBackward, { desc = "mc: jump backward" })
+-- Removed <C-i>/<C-o> multicursor jump to preserve native jumplist (use <A-[>/<A-]> for cursor nav)
 
 -- ── Mode management ────────────────────────────────────────────────────
 -- <A-q>: toggle between disabled/enabled cursors (freeze/unfreeze)

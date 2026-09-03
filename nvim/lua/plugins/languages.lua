@@ -12,9 +12,14 @@ vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
       diagnostics = { globals = { "vim" } },
-      workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+      workspace = { library = { vim.env.VIMRUNTIME } },
+      completion = { callSnippet = "Replace" },
     },
   },
+  on_init = function(client)
+    -- lazydev.nvim provides Luv/vim API types; load if available (packs.lua:35)
+    pcall(function() require("lazydev").setup({ library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } }) end)
+  end,
 })
 vim.lsp.enable("lua_ls")
 
@@ -35,8 +40,9 @@ vim.lsp.enable("pylsp")
 
 vim.lsp.config("clangd", {
   cmd = {
-    "clangd",
-    "-j=6"
+    "/usr/bin/clangd",
+    "-j=6",
+    "--query-driver=/usr/bin/clang++,/usr/bin/*clang*",
   },
   offset_encoding = "utf-16",
 })
@@ -55,9 +61,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(args)
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    client.server_capabilities.semanticTokensProvider = nil
-  end,
-})
+-- Semantic tokens: kept ENABLED for minimal type-aware highlighting
+-- (@lsp.type.class/struct/enum -> Type). Previously disabled here, now preserved.
+-- If you find LSP colors too noisy, uncomment to disable again:
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--   callback = function(args)
+--     local client = vim.lsp.get_client_by_id(args.data.client_id)
+--     if client then client.server_capabilities.semanticTokensProvider = nil end
+--   end,
+-- })

@@ -1,3 +1,4 @@
+-- vim.pack already adds mini.nvim to rtp, no packadd needed
 require("mini.cursorword").setup();
 require("mini.hipatterns").setup();
 

@@ -1,15 +1,13 @@
 -- which_key.lua
 
-vim.api.nvim_create_autocmd("VimEnter", {
-  group = vim.api.nvim_create_augroup("LazyWhichKey", { clear = true }),
-  callback = function()
-    require("which-key").setup({
-      preset = "helix",
-      win = {
-        border = "single",
-        wo = { winblend = 50 },
-      },
-      spec = {
+require("which-key").setup({
+  preset = "helix",
+  delay = 300, -- faster popup
+  win = {
+    border = "single",
+    wo = { winblend = 50 },
+  },
+  spec = {
         -- ── Ungrouped ───────────────────────────────────────────────────────
         { "<leader>.",  desc = "Toggle Scratch Buffer" },
         { "<leader>S",  desc = "Select Scratch Buffer" },
@@ -33,14 +31,17 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
         -- ── Buffers ─────────────────────────────────────────────────────────
         { "<leader>b",  group = "Buffers" },
-        { "<leader>bd", desc = "Close buffer safely" },
+        { "<leader>bd", desc = "Close buffer (Snacks)" },
         { "<leader>bo", desc = "Close other buffers" },
+        { "<leader>bs", desc = "Frecency picker" },
+        { "<leader>bS", desc = "Frecency picker (reverse)" },
 
         -- ── Tabs ────────────────────────────────────────────────────────────
         { "<leader>t",  group = "Tabs" },
         { "<leader>tn", desc = "New tab" },
         { "<leader>tc", desc = "Close tab" },
         { "<leader>to", desc = "Close other tabs" },
+        { "<leader>tb", desc = "Open buffer in new tab" },
         { "<leader>t<", desc = "Move tab left" },
         { "<leader>t>", desc = "Move tab right" },
 
@@ -54,22 +55,26 @@ vim.api.nvim_create_autocmd("VimEnter", {
         { "<leader>ca", desc = "Code action" },
         { "<leader>cf", desc = "Format buffer / selection" },
         { "<leader>cR", desc = "Rename file (Snacks)" },
+        { "<leader>C", desc = "Swap: save word" },
+        { "<leader>R", desc = "Swap: replace word" },
 
         -- ── UI / Toggles ────────────────────────────────────────────────────
         { "<leader>u",  group = "UI / Toggles" },
-        { "<leader>uC", desc = "Colorscheme picker" },
+        { "<leader>uC", desc = "Theme: palette switcher (ThemeSwitch)" },
+        { "<leader>up", desc = "Colorscheme: builtin picker (Telescope)" },
         { "<leader>un", desc = "Dismiss notifications" },
         { "<leader>us", desc = "Toggle spelling" },
         { "<leader>uw", desc = "Toggle wrap" },
         { "<leader>uL", desc = "Toggle relative numbers" },
         { "<leader>ud", desc = "Toggle diagnostics" },
         { "<leader>ul", desc = "Toggle line numbers" },
-        { "<leader>uc", group = "Completion" },
+        { "<leader>uc", desc = "Toggle conceallevel" },
         { "<leader>uca", desc = "Disable completion" },
         { "<leader>uce", desc = "Enable completion" },
         { "<leader>uT", desc = "Toggle Treesitter" },
         { "<leader>ub", desc = "Toggle background" },
         { "<leader>uh", desc = "Toggle inlay hints" },
+        { "<leader>uv", desc = "Toggle virtual_lines" },
 
         -- ── Git ─────────────────────────────────────────────────────────────
         { "<leader>g",  group = "Git" },
@@ -103,6 +108,3 @@ vim.api.nvim_create_autocmd("VimEnter", {
         { "<leader>do", desc = "Meta pickers (Snacks)" },
       },
     })
-  end,
-  once = true,
-})

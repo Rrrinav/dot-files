@@ -13,11 +13,7 @@ vim.filetype.add({
   pattern = {
     [".*/hypr/.*%.conf"] = "hyprlang",
   },
-  extension = {
-    ebnf = "ebnf",
-  },
 })
-
 
 vim.filetype.add({
   extension = {

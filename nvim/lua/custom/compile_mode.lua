@@ -102,28 +102,6 @@ local function parse_line(line)
   return nil
 end
 
----@return string?, integer?, integer?, string?, integer?
-local function parse_line(line)
-  for _, p in ipairs(patterns) do
-    local s_idx, e_idx, c1, c2, c3, c4 = line:find(p.pat)
-    if s_idx then
-      local caps = { c1, c2, c3, c4 }
-      local f = caps[p.f]
-      local l = tonumber(caps[p.l]) or 0
-      local c = p.c and tonumber(caps[p.c]) or 0
-      local m = p.m and caps[p.m] or ""
-
-      -- Basic sanity check to avoid matching random text as files
-      if f and not f:match("^%s*$") then
-        -- Return file, line, col, severity, and prefix length for highlighting
-        -- If no message is captured (e.g., Rust/Python), default to Info
-        return f, l, c, classify(m), e_idx
-      end
-    end
-  end
-  return nil
-end
-
 local function set_status(text, hl)
   if state.win and vim.api.nvim_win_is_valid(state.win) then
     vim.wo[state.win].statusline = string.format("%%#%s# %s ", hl or "Normal", text)

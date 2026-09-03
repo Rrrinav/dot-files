@@ -53,8 +53,8 @@ require("snacks").setup({
     padding = true,
     gap = 0,
     sort = { "level", "added" },
-    level = vim.log.levels.TRACE,
-    icons = { error = "", warn = "", info = "", debug = "", trace = "" },
+    level = vim.log.levels.INFO, -- was TRACE, spammed notifier with every TRACE
+    icons = { error = " ", warn = " ", info = " ", debug = " ", trace = " " },
     keep = function(notif)
       return vim.fn.getcmdpos() > 0
     end,
@@ -92,6 +92,9 @@ map("n", "<leader>gl", function() Snacks.lazygit.log()        end, { desc = "Laz
 map("n", "<leader>cR", function() Snacks.rename.rename_file() end, { desc = "Rename File" })
 map("n", "<c-/>",      function() Snacks.terminal()           end, { desc = "Toggle Terminal" })
 map("n", "<c-_>",      function() Snacks.terminal()           end, { desc = "which_key_ignore" })
+-- terminal mode: Ctrl+/ is Ctrl+_ (0x1F), map both to close (works for Snacks float and vsplit)
+map("t", "<c-/>",      "<C-\\><C-n>:q<cr>",                   { desc = "Terminal: close" })
+map("t", "<c-_>",      "<C-\\><C-n>:q<cr>",                   { desc = "which_key_ignore (t)" })
 
 map("n", "<leader>N", function()
   Snacks.win({

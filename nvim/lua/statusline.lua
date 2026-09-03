@@ -263,11 +263,10 @@ function M.setup()
 
   local group = vim.api.nvim_create_augroup("StatuslineUpdates", { clear = true })
 
-  -- Redraw on editor events
+  -- Redraw on meaningful events only (removed CursorMoved/CursorMovedI - was per-motion expensive)
   vim.api.nvim_create_autocmd({
     "ModeChanged", "BufEnter", "BufWritePost",
     "DiagnosticChanged", "LspAttach", "LspDetach",
-    "CursorMoved", "CursorMovedI",
   }, {
     group    = group,
     callback = function() vim.cmd.redrawstatus() end,

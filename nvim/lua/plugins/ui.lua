@@ -134,15 +134,15 @@ require("marks").setup({
 
 local neoscroll = require("neoscroll")
 neoscroll.setup({
-  mappings             = { "<C-u>", "<C-d>", "<C-b>", "<C-f>" },
+  mappings             = {}, -- was <C-u>/<C-d> conflict with snacks.scroll; keep snacks for most buffers, neoscroll only on demand
   hide_cursor          = false,
   stop_eof             = true,
-  respect_scrolloff    = false,
+  respect_scrolloff    = true, -- was false, respect scrolloff=8 from basic_gui
   cursor_scrolls_alone = true,
 })
-local modes = { "n", "v", "x" }
-vim.keymap.set(modes, "<C-u>", function() neoscroll.ctrl_u({ duration = 50, easing = "sine" }) end)
-vim.keymap.set(modes, "<C-d>", function() neoscroll.ctrl_d({ duration = 50, easing = "sine" }) end)
+-- <C-u>/<C-d> now handled by snacks.scroll (snacks.lua:20); keep neoscroll for <C-b>/<C-f> only
+vim.keymap.set({ "n", "v", "x" }, "<C-b>", function() neoscroll.ctrl_b({ duration = 80, easing = "sine" }) end)
+vim.keymap.set({ "n", "v", "x" }, "<C-f>", function() neoscroll.ctrl_f({ duration = 80, easing = "sine" }) end)
 
 require("csvview").setup({
   parser = {

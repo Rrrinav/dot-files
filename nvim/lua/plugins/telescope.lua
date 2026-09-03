@@ -86,11 +86,11 @@ end, {
   desc = "Live grep in current working directory",
 })
 
-vim.keymap.set("n", "<leader>uC", function()
-  builtin.colorscheme(custom_ivy())
-end, {
-  desc = "Try available colorschemes",
-})
+-- Theme trial: both palette-aware and builtin
+-- <leader>uC = palette ThemeSwitch (syncs statusline/tabline, live preview+revert)
+-- <leader>up = builtin Telescope colorscheme (raw :colorscheme, no palette sync - quick trial)
+vim.keymap.set("n", "<leader>uC", "<cmd>ThemeSwitch<cr>", { desc = "Theme: palette switcher (sync)" })
+vim.keymap.set("n", "<leader>up", function() builtin.colorscheme(custom_ivy()) end, { desc = "Colorscheme: builtin picker (Telescope)" })
 
 vim.keymap.set("n", "<leader>fx", function()
   builtin.diagnostics(custom_ivy({

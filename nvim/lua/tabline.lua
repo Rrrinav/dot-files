@@ -144,8 +144,8 @@ local function set_keymaps()
   map("<leader>tc",   "<cmd>tabclose<cr>"   ,     "Tab: close")
   map("<leader>to",   "<cmd>tabonly<cr>"    ,     "Tab: close others")
   map("<leader>tb",   "<cmd>tab split<cr>"  ,     "Tab: open buffer in new tab")
-  map("<leader>t<",   "<cmd>-tabmove<cr>"   ,     "Tab: new")
-  map("<leader>t>",   "<cmd>+tabmove<cr>"   ,     "Tab: close")
+  map("<leader>t<",   "<cmd>-tabmove<cr>"   ,     "Tab: move left")
+  map("<leader>t>",   "<cmd>+tabmove<cr>"   ,     "Tab: move right")
 end
 
 function M.setup()

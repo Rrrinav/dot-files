@@ -34,22 +34,24 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- Close help-like buffers with 'q'
 vim.api.nvim_create_autocmd("FileType", {
   group = vim.api.nvim_create_augroup("CustomSettings/CloseWithQ", { clear = true }),
-  pattern = { "git", "help", "man", "qf", "query", "scratch" },
+  pattern = { "help", "man", "qf", "query", "frecency_tab" },
   desc = "Close with <q>",
   callback = function(args)
-    vim.keymap.set("n", "q", "<cmd>quit<cr>", { buffer = args.buf, silent = true })
+    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = args.buf, silent = true })
   end,
 })
 
--- Disable LSP on certain file patterns
+-- Disable LSP on sensitive file patterns (buffer-local, not global)
 vim.api.nvim_create_autocmd("LspAttach", {
   group = autocmd_group,
   callback = function(ev)
-    _ = ev
-    local fname = vim.fn.expand('%:t')
+    local fname = vim.api.nvim_buf_get_name(ev.buf):match("([^/]+)$") or ""
     if fname:match("%.env$") or fname:match("%.example$") or fname:match("^secret%.") or fname:match("%.config$") then
-      vim.cmd("LspStop")
-      vim.notify("LSP stopped after attachment", vim.log.levels.INFO)
+      local client = vim.lsp.get_client_by_id(ev.data.client_id)
+      if client then
+        vim.lsp.stop_client(client.id, true)
+        vim.notify(("LSP %s stopped for sensitive file %s"):format(client.name, fname), vim.log.levels.INFO)
+      end
     end
   end,
 })
@@ -68,7 +70,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Map <S-CR> in command-line window to run and stay
 vim.api.nvim_create_autocmd("CmdwinEnter", {
-  group = vim.api.nvim_create_augroup("CustomSettings/CmdWinStay", { clear = true }),
+  group = autocmd_group,
   desc = "Execute command and stay in the command-line window",
   callback = function(args)
     vim.keymap.set({ "n", "i" }, "<S-CR>", "<CR>q:", { buffer = args.buf, silent = true })
@@ -77,7 +79,7 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 
 -- Terminal UI adjustments
 vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter" }, {
-  group = vim.api.nvim_create_augroup("CustomSettings/Terminal", { clear = true }),
+  group = autocmd_group,
   pattern = "*",
   callback = function()
     vim.wo.winbar = ""
@@ -97,8 +99,8 @@ vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter" }, {
 })
 
 -- Auto-save session on exit if a session is open
-vim.api.nvim_create_autocmd("VimLeave", {
-  group = vim.api.nvim_create_augroup("AutoSaveSession", { clear = true }),
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  group = autocmd_group,
   callback = function()
     local session = vim.v.this_session
     if session ~= "" then
@@ -118,10 +120,12 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "compilation",
-    once = true,
-    callback = function()
-        local height = math.floor(vim.o.lines * 0.25)
-        vim.cmd("resize " .. height)
-    end,
+  group = autocmd_group,
+  pattern = "compilation",
+  callback = function()
+    local height = math.floor(vim.o.lines * 0.25)
+    if vim.api.nvim_win_get_height(0) > height then
+      vim.cmd("resize " .. height)
+    end
+  end,
 })

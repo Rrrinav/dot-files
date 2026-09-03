@@ -17,13 +17,7 @@ map("n", "<leader>fb", function()
   Snacks.picker.buffers({ layout = { preset = "ivy" } })
 end, { desc = "Find: open buffers" })
 
-map("n", "<leader>bd", function()
-  if #vim.fn.getbufinfo({ buflisted = 1 }) > 1 then
-    vim.cmd("bd")
-  else
-    vim.notify("Can't close the last buffer!")
-  end
-end, { desc = "Buffer: close safely" })
+-- <leader>bd is handled by Snacks.bufdelete in snacks.lua (buffer-safe, keeps window) - removed duplicate here
 
 map("n", "<leader>bo", function()
   local current = vim.fn.bufnr("%")
@@ -42,8 +36,10 @@ map("n", "gT", "<cmd>tabprevious<cr>", { desc = "Tab: prev" })
 -- <C-/> Snacks.terminal toggle stays in snacks.lua (it's a Snacks concern)
 
 map("n", "<leader>Tv", "<Cmd>vsplit | term<cr>", { desc = "Terminal: vertical split" })
-map("n", "<leader>Tf", "<Cmd>Fterm<cr>", { desc = "Terminal: floating (Fterm)" })
-map("t", "<C-/>", "<C-\\><C-n>:q<cr>", { desc = "Terminal: exit insert mode" })
+map("n", "<leader>Tf", function() Snacks.terminal() end, { desc = "Terminal: floating (Snacks)" })
+-- Ctrl+/ sends Ctrl+_ (0x1F) in most terminals, so map both
+map("t", "<C-/>", "<C-\\><C-n>:q<cr>", { desc = "Terminal: close" })
+map("t", "<C-_>", "<C-\\><C-n>:q<cr>", { desc = "Terminal: close (Ctrl+_)" })
 
 -- ────────────────────────────────────────────────────────────────── CODE / LSP ──
 -- <leader>c → code actions, formatting, refactoring
@@ -75,6 +71,7 @@ map("n", "<leader>uce", "<cmd>lua vim.b.completion = true<cr>", { desc = "UI: en
 
 -- ──────────────────────────────────────────────────────────────── DIAGNOSTICS ──
 -- <leader>x → diagnostic inspection and quickfix
+-- <leader>xv/xh/xs are defined in config/diagnostics.lua (single source)
 
 map("n", "<leader>xf", function()
   vim.diagnostic.open_float(nil, { border = "rounded" })
@@ -82,14 +79,6 @@ end, { desc = "Diagnostic: open float" })
 
 map("n", "<leader>xx", vim.diagnostic.setqflist, { desc = "Diagnostic: to quickfix" })
 map("n", "<leader>xt", "<cmd>TodoQuickFix<cr>", { desc = "Diagnostic: list todos" })
-
-map("n", "<leader>xh", function()
-  vim.diagnostic.config({ virtual_text = false, signs = false, underline = false })
-end, { desc = "Diagnostic: hide" })
-
-map("n", "<leader>xs", function()
-  vim.diagnostic.config({ virtual_text = true, signs = true, underline = true })
-end, { desc = "Diagnostic: show" })
 
 -- ─────────────────────────────────────────────────────────────────── WINDOWS ──
 -- Direct <C-hjkl> navigation — no leader, no group pollution

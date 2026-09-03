@@ -23,30 +23,12 @@ require('blink.cmp').setup({
       }
     },
     ghost_text = {
-      enabled = function()
-        return require("blink.cmp").is_visible()
-      end,
+      enabled = false,
     },
   },
   sources = {
-    default = { "snippets", "lsp", "path", "buffer", "omni" },     -- Changed from default to enabled, removed luasnip
-    providers = {
-      copilot = {
-        name = "copilot",
-        module = "blink-cmp-copilot",
-        score_offset = 100,
-        async = true,
-        transform_items = function(_, items)
-          local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-          local kind_idx = #CompletionItemKind + 1
-          CompletionItemKind[kind_idx] = "Copilot"
-          for _, item in ipairs(items) do
-            item.kind = kind_idx
-          end
-          return items
-        end,
-      },
-    },
+    default = { "snippets", "lsp", "path", "buffer" },
+    -- copilot provider removed - blink-cmp-copilot not installed; add {src=gh('fang2hou/blink-copilot')} to packs.lua if needed
   },
   signature = {
     enabled = true,
