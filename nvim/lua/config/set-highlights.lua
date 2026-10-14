@@ -1,4 +1,4 @@
--- lua/config/highlights.lua
+-- lua/config/set-highlights.lua
 
 local M = {}
 local palette = require("config.palette")
@@ -63,13 +63,8 @@ local function build_groups(p, s, d)
   hl["PmenuThumb"]                           = { bg = p.dim_plumbing }
   apply_bg("PmenuKind", p.bg);
 
-  -- ── CURATED (same coverage, more colorscheme hues) ──
-  -- Base = p.fg. Keep same groups colored as before (Comment/String/Keyword family/
-  -- Type family/Constant/Number) but distribute more distinct hues from kanagawa
-  -- instead of collapsing Keyword family -> one blue and Type -> one tan.
-  -- So conditionals vs keywords vs types each keep kanagawa's own color.
-
-  -- Comments/Strings still palette-controlled (nice muted green/purple)
+  -- Syntax: leave code to the active colorscheme.  The palette only separates
+  -- things that should be immediately recognizable in every theme.
   hl["Comment"]                              = { fg = s.comment, italic = false }
   hl["@comment"]                             = { link = "Comment" }
   hl["@comment.documentation"]               = { link = "Comment" }
@@ -90,98 +85,25 @@ local function build_groups(p, s, d)
   hl["@character"]                           = { fg = p.string_pop }
   hl["@character.special"]                   = { fg = p.string_pop }
 
-  -- Keywords/Types: let kanagawa provide distinct hues per subgroup (don't force single palette)
-  hl["Operator"]                             = { fg = p.fg } -- operators muted
-  hl["@keyword"]                             = { link = "Keyword" }
-  hl["@keyword.conditional"]                 = { link = "Conditional" }
-  hl["@keyword.repeat"]                      = { link = "Repeat" }
-  hl["@keyword.return"]                      = { link = "Keyword" }
-  hl["@keyword.function"]                    = { link = "Keyword" }
-  hl["@keyword.operator"]                    = { link = "Operator" }
-  hl["@keyword.import"]                      = { link = "Include" }
-  hl["@keyword.directive"]                   = { link = "PreProc" }
-  hl["@keyword.exception"]                   = { link = "Exception" }
-  hl["@keyword.debug"]                       = { link = "Debug" }
-  hl["@include"]                             = { link = "Include" }
-  hl["@preproc"]                             = { link = "PreProc" }
-  hl["@define"]                              = { link = "Define" }
-  hl["@constant.macro"]                      = { link = "Macro" }
-
-  -- Types: palette not driving, colorscheme gives distinct Type vs Structure vs Typedef etc.
-  -- (same coverage as before, more hues from kanagawa)
-  -- More distribution: use distinct highlight groups so types vs constants not same color
-  hl["@type"]                                = { link = "Type" }
-  hl["@type.builtin"]                        = { link = "Type" }
-  hl["@type.definition"]                     = { link = "Type" }
-  hl["@type.qualifier"]                      = { link = "Type" }
-  hl["@namespace"]                           = { link = "Tag" }
-  hl["@module"]                              = { link = "Include" }
-  hl["@lsp.type.class"]                      = { link = "Type" }
-  hl["@lsp.type.struct"]                     = { link = "Structure" }
-  hl["@lsp.type.enum"]                       = { link = "Structure" }
-  hl["@lsp.type.enumMember"]                 = { link = "Constant" }
-  hl["@lsp.type.interface"]                  = { link = "Type" }
-  hl["@lsp.type.type"]                       = { link = "Type" }
-  hl["@lsp.type.typeParameter"]              = { link = "Typedef" }
-  hl["@lsp.type.namespace"]                  = { link = "Tag" }
-  hl["@lsp.typemod.class.defaultLibrary"]    = { link = "Type" }
-  hl["@lsp.typemod.enum.defaultLibrary"]     = { link = "Structure" }
-  hl["@lsp.typemod.struct.defaultLibrary"]   = { link = "Structure" }
-  -- Extra distinct for builtins vs definitions
-  hl["@lsp.type.enumMember"]                 = { link = "Constant" }
-
-  -- LSP Semantic Modifiers (mute - stay base)
-  hl["@lsp.typemod.method.defaultLibrary"]   = { link = "@function" }
-  hl["@lsp.typemod.function.defaultLibrary"] = { link = "@function" }
-  hl["@lsp.typemod.variable.defaultLibrary"] = { link = "@variable" }
-  hl["@lsp.typemod.macro.defaultLibrary"]    = { link = "Keyword" }
-  hl["@lsp.typemod.variable.readonly"]       = { link = "@variable" }
-  hl["@lsp.typemod.property.readonly"]       = { link = "@property" }
-  hl["@lsp.typemod.method.classScope"]       = { link = "@function" }
-  hl["@lsp.typemod.variable.classScope"]     = { link = "@property" }
-  hl["@lsp.type.parameter"]                  = { link = "@variable.parameter" }
-  hl["@lsp.type.variable"]                   = { link = "@variable" }
-  hl["@lsp.type.property"]                   = { link = "@property" }
-  hl["@lsp.type.function"]                   = { link = "@function" }
-  hl["@lsp.type.method"]                     = { link = "@function" }
-  hl["@lsp.type.macro"]                      = { link = "Keyword" }
-
-  -- ── SENSIBLE MUTED (help understanding, not rainbow) ──
-  -- Variables stay base, functions get a little more color (info blue) so `foo()` pops
-  -- Params stay base (no italic) - italics removed globally.
-  hl["Identifier"]                           = { fg = p.fg }
-  hl["@variable"]                            = { fg = p.fg }
-  hl["@variable.builtin"]                    = { fg = p.fg }
-  hl["@variable.parameter"]                  = { fg = p.fg }
-  hl["@variable.member"]                     = { fg = p.fg }
-  hl["@property"]                            = { fg = p.fg }
-  hl["@field"]                               = { fg = p.fg }
-  hl["@attribute"]                           = { fg = p.fg }
-  hl["Function"]                             = { fg = p.info }
-  hl["@function"]                            = { fg = p.info }
-  hl["@function.call"]                       = { fg = p.info }
-  hl["@function.builtin"]                    = { fg = p.info }
-  hl["@function.method"]                     = { fg = p.info }
-  hl["@function.method.call"]                = { fg = p.info }
-  hl["@constructor"]                         = { fg = p.info }
-  hl["@method"]                              = { fg = p.info }
-  hl["@method.call"]                         = { fg = p.info }
-  hl["@parameter"]                           = { fg = p.fg }
-  -- Constants/Numbers: let colorscheme distribute Constant vs Number vs Boolean distinct hues (more colors)
-
-  -- Punctuation: a little poppy per colorscheme (not dim_plumbing, not loud)
-  hl["Delimiter"]                            = { fg = p.subtle }
-  hl["Special"]                              = { fg = p.fg }
-  hl["SpecialChar"]                          = { fg = p.subtle }
-  hl["Tag"]                                  = { fg = p.fg }
-  hl["@tag"]                                 = { fg = p.fg }
-  hl["@tag.attribute"]                       = { link = "@property" }
-  hl["@tag.delimiter"]                       = { fg = p.subtle }
-  hl["@punctuation.delimiter"]               = { fg = p.subtle }
-  hl["@punctuation.bracket"]                 = { fg = p.subtle }
-  hl["@punctuation.special"]                 = { fg = p.subtle }
-  hl["@operator"]                            = { link = "Operator" }
-  hl["@none"]                                = { fg = p.fg }
+  -- Do not override identifiers, keywords, types, constants,
+  -- operators, punctuation, tags, or LSP semantic tokens here. Their hue and
+  -- contrast come entirely from the colorscheme, so code remains cohesive when
+  -- themes change instead of being recolored by this UI palette.
+  -- Calls should use exactly the variable color, rather than a similar palette
+  -- foreground. Cover Tree-sitter's generic and C++ captures, plus LSP semantic
+  -- tokens, since the latter can take priority in C++ buffers.
+  hl["@variable.cpp"]                        = { link = "@variable" }
+  hl["@function.call"]                       = { link = "@variable" }
+  hl["@function.method.call"]                = { link = "@variable" }
+  hl["@function.call.cpp"]                   = { link = "@variable" }
+  hl["@function.method.call.cpp"]            = { link = "@variable" }
+  hl["@constructor"]                         = { link = "@variable" }
+  hl["@constructor.cpp"]                     = { link = "@variable" }
+  hl["@method.call"]                         = { link = "@variable" }
+  hl["@lsp.type.function"]                   = { link = "@variable" }
+  hl["@lsp.type.method"]                     = { link = "@variable" }
+  hl["@lsp.typemod.function.defaultLibrary"] = { link = "@variable" }
+  hl["@lsp.typemod.method.defaultLibrary"]   = { link = "@variable" }
   hl["@error"]                               = { fg = p.error }
   hl["Error"]                                = { fg = p.error }
 

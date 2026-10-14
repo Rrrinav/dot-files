@@ -18,7 +18,7 @@ for _, group in ipairs({ "neutral", "warm", "cool", "green", "purple", "popular"
 end
 
 -- Active State
-M.colors = vim.deepcopy(M.themes.kanagawa_dragon2)
+M.colors = vim.deepcopy(M.themes.espresso)
 
 -- Static Elements
 M.static = {

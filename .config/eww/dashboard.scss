@@ -1,109 +1,134 @@
 /* ============================================================
-   DASHBOARD - matches bar.scss pywal theme
+   DASHBOARD CSS
    ============================================================ */
-
 .dashboard {
   background-color: $background;
   background-image: linear-gradient(to bottom right, $background, transparentize($color1, 0.85));
   border: 1px solid $color5;
   border-radius: 6px;
   padding: 16px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.55);
   color: $foreground;
 }
 
-/* --- Header --- */
 .dash-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid $color8;
+  padding-bottom: 8px;
+  border-bottom: 1px solid transparentize($color8, 0.4);
 }
 
 .dash-greeting {
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   color: $color5;
 }
 
 .dash-uptime {
-  font-size: 11px;
-  color: transparentize($foreground, 0.4);
+  font-size: 13px;
+  color: transparentize($foreground, 0.45);
 }
 
 .dash-time {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 20px;
   color: $foreground;
 }
 
 .dash-date {
-  font-size: 11px;
-  color: transparentize($foreground, 0.4);
+  font-size: 13px;
+  color: transparentize($foreground, 0.45);
 }
 
-/* --- Sections --- */
-.dash-section {
-  background-color: transparentize($color8, 0.75);
+.dash-close {
+  min-width: 24px;
+  min-height: 24px;
   border-radius: 4px;
-  padding: 10px;
-}
-
-/* --- Stat bars --- */
-.stat-row {
-  padding: 1px 0px;
-}
-
-.stat-icon {
-  color: $color4;
-  min-width: 18px;
-}
-
-.stat-label {
-  color: $foreground;
+  border: 1px solid $color8;
+  color: transparentize($foreground, 0.3);
   font-size: 12px;
 }
 
-.stat-value {
-  color: transparentize($foreground, 0.3);
-  font-size: 11px;
+.dash-close:hover {
+  background: transparentize($color8, 0.5);
 }
 
-.stat-bar-track {
-  min-height: 4px;
-  min-width: 160px;
-  border-radius: 10px;
-  background-color: transparentize($color8, 0.4);
+.dash-section {
+  background-color: transparentize($color8, 0.82);
+  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid transparentize($color8, 0.7);
 }
 
-.stat-bar-fill {
-  min-height: 4px;
-  border-radius: 10px;
-  transition: all 0.4s cubic-bezier(0.05, 0.9, 0.1, 1.05);
-}
-
-/* --- Toggle pills --- */
-.toggles {
+/* Quick Apps */
+.apps-row {
   padding: 8px;
+}
+
+.app-btn {
+  font-size: 24px;
+  min-width: 48px;
+  min-height: 48px;
+  background: transparentize($background, 0.3);
+  border-radius: 8px;
+  border: 1px solid transparentize($color8, 0.5);
+  transition: 0.2s;
+}
+
+.app-btn:hover {
+  background: transparentize($color8, 0.7);
+  border-color: $color5;
+}
+
+/* System Cards */
+.sys-card {
+  background-color: transparentize($background, 0.3);
+  border: 1px solid transparentize($color8, 0.6);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.sys-icon {
+  font-size: 18px;
+  min-width: 22px;
+}
+
+.sys-label {
+  font-size: 11px;
+  color: transparentize($foreground, 0.4);
+  font-weight: bold;
+  margin-bottom: -2px;
+}
+
+.sys-val {
+  font-size: 13px;
+  color: $foreground;
+}
+
+/* Toggles */
+.toggles {
+  padding: 6px;
 }
 
 .toggle-pill {
   padding: 8px 6px;
-  border-radius: 4px;
+  border-radius: 5px;
   border: 1px solid $color8;
-  background-color: transparent;
-  transition: all 0.2s;
+  background-color: transparentize($background, 0.3);
+  min-width: 68px;
 }
 
 .toggle-pill:hover {
-  border: 1px solid $color4;
+  border-color: $color4;
+  background-color: transparentize($color8, 0.75);
 }
 
 .toggle-pill.active {
-  background-color: transparentize($color5, 0.7);
-  border: 1px solid $color5;
+  background-color: transparentize($color5, 0.75);
+  border-color: $color5;
+  box-shadow: 0 0 8px transparentize($color5, 0.6);
 }
 
 .toggle-icon {
-  font-size: 16px;
+  font-size: 18px;
   color: $foreground;
 }
 
@@ -112,25 +137,179 @@
 }
 
 .toggle-label {
-  font-size: 9px;
-  color: transparentize($foreground, 0.3);
+  font-size: 11px;
+  color: transparentize($foreground, 0.25);
   margin-top: 2px;
 }
 
-/* --- Sliders --- */
-.slider-icon {
-  color: $color4;
-  min-width: 16px;
+/* Expandables */
+.expand-section {
+  padding: 10px;
 }
 
-.dash-slider {
-  all: unset;
+.expand-header {
+  background: transparent;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: $foreground;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: transparentize($foreground, 0.45);
+}
+
+.on-off-switch {
+  font-size: 20px;
+  color: transparentize($foreground, 0.5);
+  padding: 0 6px;
+}
+
+.on-off-switch.on {
+  color: $color4;
+}
+
+.expand-icon {
+  font-size: 14px;
+  color: transparentize($foreground, 0.3);
+  min-width: 22px;
+  transition: 0.2s;
+}
+
+.expand-icon.open {
+  color: $color4;
+}
+
+.expand-icon:hover {
+  color: $foreground;
+}
+
+.section-action {
+  min-width: 26px;
+  min-height: 26px;
+  border-radius: 4px;
+  border: 1px solid $color8;
+  color: transparentize($foreground, 0.4);
+  font-size: 11px;
+}
+
+.section-action:hover {
+  border-color: $color4;
+  color: $color4;
+  background-color: transparentize($color4, 0.85);
+}
+
+/* Lists */
+.wifi-row,
+.bt-row {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: transparentize($background, 0.35);
+  border: 1px solid transparentize($color8, 0.65);
+}
+
+.wifi-row:hover,
+.bt-row:hover {
+  border-color: $color4;
+  background-color: transparentize($color8, 0.78);
+}
+
+.wifi-row.active {
+  border-color: $color4;
+  background-color: transparentize($color4, 0.85);
+}
+
+.bt-row.connected {
+  border-color: $color6;
+  background-color: transparentize($color6, 0.88);
+}
+
+.wifi-icon,
+.bt-icon {
+  font-size: 16px;
+  min-width: 18px;
+  color: $color4;
+}
+
+.bt-row.connected .bt-icon {
+  color: $color6;
+}
+
+.wifi-ssid,
+.bt-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: $foreground;
+}
+
+.wifi-sec,
+.wifi-signal,
+.bt-status {
+  font-size: 12px;
+  color: transparentize($foreground, 0.45);
+}
+
+.wifi-speed {
+  font-size: 11px;
+  color: $color4;
+  background-color: transparentize($color4, 0.8);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 8px;
+}
+
+.wifi-connect,
+.bt-action {
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 4px;
+  background-color: transparentize($color8, 0.7);
+  border: 1px solid $color8;
+  font-size: 10px;
+}
+
+.wifi-connect:hover {
+  background-color: $color4;
+  border-color: $color4;
+  color: $background;
+}
+
+.bt-action:hover {
+  background-color: $color6;
+  border-color: $color6;
+  color: $background;
+}
+
+.bt-action.connected {
+  background-color: transparentize($color6, 0.75);
+  border-color: $color6;
+  color: $color6;
+}
+
+scroll {
+  background-color: transparent;
+}
+
+scroll slider {
+  background-color: transparentize($color8, 0.6);
+  border-radius: 10px;
+  min-width: 4px;
+}
+
+/* Sliders */
+.slider-icon {
+  min-width: 20px;
+  font-size: 16px;
+  color: $color4;
 }
 
 .dash-slider trough {
-  min-height: 4px;
+  min-height: 6px;
   border-radius: 10px;
-  background-color: transparentize($color8, 0.4);
+  background-color: transparentize($color8, 0.45);
 }
 
 .dash-slider highlight {
@@ -138,23 +317,74 @@
   background-color: $color5;
 }
 
-/* --- Power row --- */
+.dash-slider.mic-slider highlight {
+  background-color: $color6;
+}
+
+.slider-value {
+  font-size: 14px;
+  color: transparentize($foreground, 0.35);
+  min-width: 36px;
+}
+
+/* Media */
+.dash-media-art {
+  min-width: 60px;
+  min-height: 60px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid $color8;
+}
+
+.dash-media-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: $color5;
+}
+
+.dash-media-artist {
+  font-size: 13px;
+  color: transparentize($foreground, 0.4);
+  font-style: italic;
+}
+
+.media-btn {
+  min-width: 26px;
+  min-height: 26px;
+  border-radius: 4px;
+  border: 1px solid $color8;
+  font-size: 12px;
+}
+
+.media-btn.primary {
+  min-width: 28px;
+  min-height: 28px;
+  font-size: 14px;
+  background-color: transparentize($color5, 0.75);
+  border-color: $color5;
+  color: $color5;
+}
+
+/* Power */
 .power-row {
   padding: 6px;
+  background: transparent;
+  border: none;
 }
 
 .power-btn {
-  min-width: 32px;
-  min-height: 32px;
-  border-radius: 50%;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 4px;
   border: 1px solid $color8;
   font-size: 15px;
-  color: $foreground;
-  transition: all 0.2s cubic-bezier(0.05, 0.9, 0.1, 1.05);
+  background-color: transparentize($background, 0.4);
+  transition: 0.2s;
 }
 
 .power-btn:hover {
-  border: 1px solid $color5;
+  background-color: transparentize($color8, 0.6);
+  border-color: $color5;
   color: $color5;
-  box-shadow: 0px 0px 6px transparentize($color5, 0.6);
 }

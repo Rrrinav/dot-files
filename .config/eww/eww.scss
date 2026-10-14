@@ -95,6 +95,60 @@ window {
   border-right: 1px dashed $color13;
 }
 
+.module-bluetooth {
+  padding: 1px 6px;
+  margin: 0 2px;
+  border-radius: 3px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.module-bluetooth:hover {
+  background-color: transparentize($color8, 0.5);
+  border-color: $color6;
+}
+
+.bluetooth-label {
+  color: $color6;
+  font-size: 13px;
+  min-width: 16px;
+}
+
+.bluetooth-disconnect {
+  background-color: transparentize($color1, 0.7);
+  color: $foreground;
+  border-radius: 10px;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  border: 1px solid $color1;
+  transition: all 0.15s ease;
+}
+
+.bluetooth-disconnect:hover {
+  background-color: $color1;
+  color: $background;
+}
+
+.dash-toggle {
+  background-color: transparentize($color8, 0.85);
+  border: 1px solid $color8;
+  border-radius: 3px;
+  padding: 2px 8px;
+  margin-left: 2px;
+  color: $foreground;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.dash-toggle:hover {
+  background-color: transparentize($color5, 0.75);
+  border-color: $color5;
+  color: $color5;
+}
+
 .center {
   background-color: transparentize($color3, 0.5);
   padding: 0px 4px;

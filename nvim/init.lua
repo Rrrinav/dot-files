@@ -31,7 +31,7 @@ safe_require("config.filetypes")
 safe_require("config.keymaps")
 safe_require("config.autocmds")
 
-vim.cmd.colorscheme("kanagawa-dragon")
+vim.cmd.colorscheme("onedark")
 
 safe_require("statusline", "setup")
 safe_require("tabline", "setup")

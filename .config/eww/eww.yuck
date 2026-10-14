@@ -18,6 +18,9 @@
 
 (defpoll battery :interval "15s" "~/.config/eww/scripts/battery.sh")
 (defpoll cpu_tooltip :interval "2s" "python3 ~/.config/eww/scripts/cpu_tooltip.py")
+(defpoll bluetooth :interval "2s" "~/.config/eww/scripts/bluetooth_connected.sh")
+(defpoll bluetooth_tooltip :interval "2s" "~/.config/eww/scripts/bluetooth_tooltip.sh")
+(defvar bt_reveal false)
 
 ;; --- MUSIC VARIABLES ---
 (deflisten music :initial "" "python3 ~/.config/eww/scripts/music_manager.py")
@@ -56,6 +59,15 @@
                            :width 100
                            :hexpand false
                            :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"))))
+        ;; BLUETOOTH - single icon + hover disconnect, fixed padding
+        (eventbox :onhover "eww update bt_reveal=true" :onhoverlost "eww update bt_reveal=false"
+                  :visible {bluetooth != ""}
+            (box :class "module-bluetooth" :space-evenly false :spacing 5
+                (label :class "bluetooth-label" :text "󰂯" :tooltip bluetooth_tooltip)
+                (revealer :transition "slideright" :reveal bt_reveal :duration "250ms"
+                    (eventbox :onclick "~/.config/eww/scripts/bluetooth_disconnect.sh" :cursor "pointer" :tooltip "Disconnect"
+                        (box :class "bluetooth-disconnect"
+                            (label :text "󰂭"))))))
         (box :class "module-battery" (label :text "${battery}"))))
 
 (defwidget music_minimal_widget []
@@ -116,7 +128,11 @@
              (music_minimal_widget)
              (label :class "window-title" :text " > ${window_title}"))
         (center)
-        (box :class "right" :halign "end" :space-evenly false (right_modules))))
+        (box :class "right" :halign "end" :space-evenly false :spacing 8
+            (right_modules)
+            (eventbox :cursor "pointer" :onclick "eww open --toggle dashboard" :tooltip "Dashboard  [Super+D]"
+                (box :class "dash-toggle" :halign "center" :valign "center"
+                    (label :text "󰕮"))))))
 
 (defwindow calendar
     :monitor 0 :geometry (geometry :x "0px" :y "35px" :width "270px" :height "60px" :anchor "bottom center")

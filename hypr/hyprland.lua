@@ -125,14 +125,14 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 -- Apps
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + C", hl.dsp.window.kill())
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprshutdown"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("systemctl poweroff"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout"))
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(
-  'sh ' .. HOME .. '/.local/bin/pywal.sh | dunstify "Select wallpapers" -t 1000'
+  'sh ' .. HOME .. '/.local/bin/pywal.sh; dunstify "Select wallpapers" -t 1000'
 ))
 
 -- ── Focus movement ───────────────────────────────────────────
@@ -218,21 +218,21 @@ hl.bind("XF86AudioMicMute", toggle_mic)
 
 -- ── Misc ─────────────────────────────────────────────────────
 hl.bind("SHIFT + F4", hl.dsp.exec_cmd(HOME .. "/.local/bin/toggle_bar.sh"))
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("eww open --toggle dashboard"))
 
 -- ── Screenshots ──────────────────────────────────────────────
 -- No leading comma for bare keys like Print
 hl.bind("Print", hl.dsp.exec_cmd(
   'grim -g "$(slurp)" - | wl-copy && wl-paste > ~/Pictures/Screenshots/Screenshot-$(date +%F_%T).png' ..
-  ' | dunstify "Screenshot of region taken" -t 1000'
+  ' && dunstify "Screenshot of region taken" -t 1000'
 ))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd(
   'grim - | wl-copy && wl-paste > ~/Pictures/Screenshots/Screenshot-$(date +%F_%T).png' ..
-  ' | dunstify "Screenshot taken" -t 1000'
+  ' && dunstify "Screenshot taken" -t 1000'
 ))
 
 -- ── Clipboard / Window switcher ──────────────────────────────
 hl.bind("ALT + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
-hl.bind("ALT + Tab", hl.dsp.exec_cmd(HOME .. "/.local/bin/rofi-windows.sh"))
 
 -- ── Resize submap ────────────────────────────────────────────
 hl.bind("ALT + R", hl.dsp.submap("resize"))

@@ -3,37 +3,51 @@
 ;; ============================================================
 
 (defpoll net_status   :interval "5s"  "~/.config/eww/scripts/dash/network.sh")
-(defpoll bt_status     :interval "5s"  "~/.config/eww/scripts/dash/bluetooth.sh")
-(defpoll brightness    :interval "1s"  "~/.config/eww/scripts/dash/brightness.sh")
-(defpoll disk_usage    :interval "30s" "~/.config/eww/scripts/dash/disk.sh")
-(defpoll uptime_str    :interval "60s" "~/.config/eww/scripts/dash/uptime.sh")
-(defpoll cpu_temp      :interval "5s"  "~/.config/eww/scripts/dash/cpu_temp.sh")
-(defpoll user_name     :interval "1h"  "whoami")
-(defpoll host_name     :interval "1h"  "hostname")
+(defpoll bt_status    :interval "5s"  "~/.config/eww/scripts/dash/bluetooth.sh")
+(defpoll brightness   :interval "1s"  "~/.config/eww/scripts/dash/brightness.sh")
+(defpoll disk_usage   :interval "30s" "~/.config/eww/scripts/dash/disk.sh")
+(defpoll uptime_str   :interval "60s" "~/.config/eww/scripts/dash/uptime.sh")
+(defpoll cpu_temp     :interval "5s"  "~/.config/eww/scripts/dash/cpu_temp.sh")
+(defpoll user_name    :interval "1h"  "whoami")
+(defpoll host_name    :interval "1h"  "hostname")
+(defpoll wifi_ip      :interval "5s"  "~/.config/eww/scripts/dash/wifi_ip.sh")
+(defpoll wifi_speed   :interval "5s"  "~/.config/eww/scripts/dash/wifi_speed.sh")
+(defpoll mic_volume   :interval "1s"  "~/.config/eww/scripts/dash/mic_volume.sh")
+(defpoll mic_status   :interval "1s"  "~/.config/eww/scripts/dash/mic_status.sh")
+(defpoll batt_percent :interval "10s" "~/.config/eww/scripts/dash/battery_percent.sh")
+(defpoll bt_battery   :interval "5s"  "~/.config/eww/scripts/dash/bt_battery.sh")
+(defpoll perf_profile :interval "5s"  "~/.config/eww/scripts/dash/perf_profile.sh")
+(defpoll dnd_status   :interval "2s"  "~/.config/eww/scripts/dash/dnd_status.sh")
+
+
+(defpoll wifi_list    :interval "12s" "bash ~/.config/eww/scripts/dash/wifi_list.sh")
+(defpoll bt_list      :interval "8s"  "bash ~/.config/eww/scripts/dash/bt_list.sh")
+
+(defvar show_wifi false)
+(defvar show_bt false)
 
 ;; ============================================================
 ;;                      REUSABLE WIDGETS
 ;; ============================================================
 
-;; Horizontal stat bar: icon + label, animated fill track, percent value
-(defwidget stat_bar [icon label value color]
-    (box :class "stat-row" :orientation "h" :space-evenly false :spacing 8
-        (label :class "stat-icon" :text icon)
-        (box :orientation "v" :space-evenly false :spacing 2 :hexpand true
-            (box :orientation "h" :space-evenly false
-                (label :class "stat-label" :text label :halign "start" :hexpand true)
-                (label :class "stat-value" :text "${round(value, 0)}%" :halign "end"))
-            (box :class "stat-bar-track"
-                (box :class "stat-bar-fill" :style "background-color: ${color}; min-width: ${round(value * 1.6, 0)}px;")))))
+(defwidget sys_card [icon label val color]
+    (box :class "sys-card" :orientation "h" :space-evenly false :spacing 12
+        (label :class "sys-icon" :style "color: ${color};" :text icon)
+        (box :orientation "v" :space-evenly false :valign "center" :hexpand true
+            (label :class "sys-label" :text label :halign "start")
+            (label :class "sys-val" :text val :halign "start" :limit-width 12))))
 
-;; Quick-toggle pill button (wifi / bluetooth / dnd)
 (defwidget toggle_pill [icon label active onclick]
     (eventbox :cursor "pointer" :onclick onclick
-        (box :class "toggle-pill ${active ? "active" : ""}" :orientation "v" :space-evenly false :spacing 2 :halign "center"
+        (box :class "toggle-pill ${active ? 'active' : ''}" :orientation "v" :space-evenly false :spacing 4 :halign "center"
             (label :class "toggle-icon" :text icon)
             (label :class "toggle-label" :text label))))
 
-;; Power menu button
+(defwidget app_btn [icon tooltip onclick color]
+    (eventbox :cursor "pointer" :onclick onclick :tooltip tooltip
+        (box :class "app-btn" :style "color: ${color};" :halign "center" :valign "center"
+            (label :text icon))))
+
 (defwidget power_btn [icon tooltip onclick]
     (eventbox :cursor "pointer" :onclick onclick :tooltip tooltip
         (box :class "power-btn" :halign "center" :valign "center"
@@ -44,65 +58,129 @@
 ;; ============================================================
 
 (defwidget dashboard_widget []
-    (box :class "dashboard" :orientation "v" :space-evenly false :spacing 14
+    (box :class "dashboard" :orientation "v" :space-evenly false :spacing 10
 
-        ;; --- Header: greeting + clock ---
-        (box :class "dash-header" :orientation "h" :space-evenly false
-            (box :orientation "v" :space-evenly false :halign "start" :hexpand true
+        ;; --- Header ---
+        (box :class "dash-header" :orientation "h" :space-evenly false :spacing 8
+            (box :orientation "v" :space-evenly false :halign "start" :hexpand true :spacing 2
                 (label :class "dash-greeting" :text "${user_name}@${host_name}" :halign "start")
                 (label :class "dash-uptime" :text "up ${uptime_str}" :halign "start"))
-            (box :orientation "v" :space-evenly false :halign "end"
-                (label :class "dash-time" :text time :halign "end")
-                (label :class "dash-date" :text date :halign "end")))
+            (box :orientation "h" :spacing 8 :valign "center"
+                (box :orientation "v" :space-evenly false :halign "end" :spacing 1
+                    (label :class "dash-time" :text time :halign "end")
+                    (label :class "dash-date" :text date :halign "end"))
+                (eventbox :cursor "pointer" :onclick "eww close dashboard" :tooltip "Close"
+                    (box :class "dash-close" :halign "center" :valign "center" (label :text "󰅜")))))
 
-        ;; --- System stats ---
-        (box :class "dash-section" :orientation "v" :space-evenly false :spacing 8
-            (stat_bar :icon "" :label "CPU" :value {EWW_CPU.avg} :color "$color4")
-            (stat_bar :icon "" :label "RAM" :value {EWW_RAM.used_mem_perc} :color "$color5")
-            (stat_bar :icon "" :label "Disk" :value {disk_usage != "" ? disk_usage : 0} :color "$color6")
-            (box :class "stat-row" :orientation "h" :space-evenly false :spacing 8
-                (label :class "stat-icon" :text "")
-                (label :class "stat-label" :text "Temp" :hexpand true :halign "start")
-                (label :class "stat-value" :text "${cpu_temp}°C" :halign "end")))
+        ;; --- Quick Apps (New Feature) ---
+        (box :class "dash-section apps-row" :orientation "h" :space-evenly true :spacing 8
+            (app_btn :icon "󰈹" :tooltip "Browser" :color "$color4" :onclick "firefox & eww close dashboard")
+            (app_btn :icon "󰆍" :tooltip "Terminal" :color "$color5" :onclick "kitty & eww close dashboard")
+            (app_btn :icon "" :tooltip "Files" :color "$color6" :onclick "xdg-open ~ & eww close dashboard")
+            (app_btn :icon "󰒓" :tooltip "Settings" :color "$color7" :onclick "kitty -e nvim ~/.config/hypr/hyprland.conf & eww close dashboard"))
+
+        ;; --- System Stats ---
+        (box :class "dash-section" :orientation "v" :spacing 8
+            (box :orientation "h" :spacing 8 :space-evenly true
+                (sys_card :icon "" :label "CPU" :val "${round(EWW_CPU.avg, 0)}%" :color "$color4")
+                (sys_card :icon "" :label "RAM" :val "${round(EWW_RAM.used_mem_perc, 0)}%" :color "$color5")
+                (sys_card :icon "󰋊" :label "Disk" :val "${disk_usage != '' ? disk_usage : '0'}%" :color "$color6"))
+            (box :orientation "h" :spacing 8 :space-evenly true
+                (sys_card :icon "󰁹" :label "Bat" :val "${batt_percent != '' ? batt_percent : '0'}%" :color "$color4")
+                (sys_card :icon "󰔏" :label "Temp" :val "${cpu_temp}°C" :color "$color5")
+                (sys_card :icon "󰕮" :label "Net" :val net_status :color "$color6")))
 
         ;; --- Quick toggles ---
-        (box :class "dash-section toggles" :orientation "h" :space-evenly true :spacing 8
-            (toggle_pill :icon "" :label net_status :active {net_status != " Disconnected"}
-                :onclick "nmtui &")
-            (toggle_pill :icon "" :label "${bt_status == "on" ? "Bluetooth" : "Off"}" :active {bt_status == "on"}
-                :onclick "~/.config/eww/scripts/dash/bluetooth_toggle.sh")
-            (toggle_pill :icon "" :label "Files" :active false
-                :onclick "xdg-open ~ &"))
+        (box :class "dash-section toggles" :orientation "v" :spacing 4
+            (scroll :hscroll true :vscroll false :height 48
+                (box :class "toggles-row" :orientation "h" :spacing 8 :space-evenly false
+                    (toggle_pill :icon "${mic_status == 'muted' ? '󰍭' : ''}" :label "${mic_status == 'muted' ? 'Muted' : 'Mic'}" :active {mic_status != "muted"}
+                        :onclick "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
+                    (toggle_pill :icon "${dnd_status == 'on' ? '󰂛' : '󰂚'}" :label "${dnd_status == 'on' ? 'DND' : 'Notify'}" :active {dnd_status == "on"}
+                        :onclick "dunstctl set-paused toggle &")
+                    (toggle_pill :icon "${perf_profile == 'power-saver' ? '󰾆' : perf_profile == 'balanced' ? '󰾅' : '󰓅'}" :label "${perf_profile == 'power-saver' ? 'Saver' : perf_profile == 'balanced' ? 'Balanced' : 'Perf'}" :active {perf_profile == "performance"}
+                        :onclick "~/.config/eww/scripts/dash/perf_toggle.sh")
+                    (toggle_pill :icon "󰏘" :label "Theme" :active false :onclick "sh ~/.local/bin/pywal.sh &")
+                    (toggle_pill :icon "" :label "Shot" :active false :onclick "bash ~/.config/eww/scripts/dash/screenshot.sh & eww close dashboard"))))
 
-        ;; --- Sliders: brightness + volume ---
-        (box :class "dash-section" :orientation "v" :space-evenly false :spacing 10
-            (box :orientation "h" :space-evenly false :spacing 8
-                (label :class "slider-icon" :text "")
-                (scale :class "dash-slider" :orientation "h" :hexpand true
-                    :value {brightness != "" ? brightness : 0} :min 0 :max 100
-                    :onchange "brightnessctl set {}% "))
-            (box :orientation "h" :space-evenly false :spacing 8
-                (eventbox :cursor "pointer" :onclick "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-                    (label :class "slider-icon" :text ""))
-                (scale :class "dash-slider" :orientation "h" :hexpand true
-                    :value {volume_percent} :min 0 :max 100
-                    :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%")))
+        ;; --- Expandable WiFi ---
+        (box :class "dash-section expand-section" :orientation "v" :space-evenly false :spacing 0
+            (box :class "expand-header" :orientation "h" :space-evenly false :spacing 8
+                (label :class "section-title" :text "Wi-Fi" :hexpand true :halign "start")
+                (label :class "section-subtitle" :text "${net_status == ' Disconnected' ? 'Offline' : wifi_ip}")
+                (eventbox :cursor "pointer" :valign "center" :onclick "~/.config/eww/scripts/dash/wifi_toggle.sh"
+                    (label :class "on-off-switch ${net_status != ' Disconnected' ? 'on' : 'off'}" :text "${net_status != ' Disconnected' ? '' : ''}"))
+                (eventbox :cursor "pointer" :valign "center" :onclick "eww update show_wifi=${!show_wifi}"
+                    (label :class "expand-icon ${show_wifi ? 'open' : ''}" :text "")))
+            (revealer :transition "slidedown" :reveal show_wifi :duration "250ms"
+                (box :orientation "v" :space-evenly false :spacing 6 :style "margin-top: 10px;"
+                    (box :orientation "h" :space-evenly false :spacing 8 :halign "end"
+                        (eventbox :cursor "pointer" :onclick "nmcli dev wifi rescan & notify-send 'WiFi' 'Scanning...' -t 1000 &" :tooltip "Rescan"
+                            (box :class "section-action" (label :text "󰑓")))
+                        (eventbox :cursor "pointer" :onclick "kitty -e nmtui & eww close dashboard" :tooltip "Network settings"
+                            (box :class "section-action" (label :text ""))))
+                    (scroll :vscroll true :hscroll false :height 160
+                        (literal :content wifi_list)))))
+
+        ;; --- Expandable Bluetooth ---
+        (box :class "dash-section expand-section" :orientation "v" :space-evenly false :spacing 0
+            (box :class "expand-header" :orientation "h" :space-evenly false :spacing 8
+                (label :class "section-title" :text "Bluetooth" :hexpand true :halign "start")
+                (label :class "section-subtitle" :text "${bt_status == 'on' ? (bt_battery != '' ? bt_battery : 'On') : 'Off'}")
+                (eventbox :cursor "pointer" :valign "center" :onclick "~/.config/eww/scripts/dash/bluetooth_toggle.sh"
+                    (label :class "on-off-switch ${bt_status == 'on' ? 'on' : 'off'}" :text "${bt_status == 'on' ? '' : ''}"))
+                (eventbox :cursor "pointer" :valign "center" :onclick "eww update show_bt=${!show_bt}"
+                    (label :class "expand-icon ${show_bt ? 'open' : ''}" :text "")))
+            (revealer :transition "slidedown" :reveal show_bt :duration "250ms"
+                (box :orientation "v" :space-evenly false :spacing 6 :style "margin-top: 10px;"
+                    (box :orientation "h" :space-evenly false :spacing 8 :halign "end"
+                        (eventbox :cursor "pointer" :onclick "bluetoothctl --timeout 5 scan on & notify-send 'Bluetooth' 'Scanning...' -t 1200 &" :tooltip "Scan"
+                            (box :class "section-action" (label :text "")))
+                        (eventbox :cursor "pointer" :onclick "blueman-manager & eww close dashboard" :tooltip "Manager"
+                            (box :class "section-action" (label :text ""))))
+                    (scroll :vscroll true :hscroll false :height 160
+                        (literal :content bt_list)))))
+
+        ;; --- Sliders ---
+        (box :class "dash-section" :orientation "v" :space-evenly false :spacing 12
+            (box :orientation "h" :space-evenly false :spacing 10
+                (label :class "slider-icon" :text "󰃠" :tooltip "Brightness")
+                (scale :class "dash-slider" :orientation "h" :hexpand true :value {brightness != "" ? brightness : 0} :min 5 :max 100 :onchange "brightnessctl set {}% &")
+                (label :class "slider-value" :text "${brightness}%"))
+            (box :orientation "h" :space-evenly false :spacing 10
+                (eventbox :cursor "pointer" :onclick "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" :tooltip "Mute"
+                    (label :class "slider-icon" :text "${volume_percent > 0 ? '' : ''}" ))
+                (scale :class "dash-slider" :orientation "h" :hexpand true :value {volume_percent != "" ? volume_percent : 0} :min 0 :max 100 :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}% &")
+                (label :class "slider-value" :text "${volume_percent}%"))
+            (box :orientation "h" :space-evenly false :spacing 10
+                (eventbox :cursor "pointer" :onclick "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+                    (label :class "slider-icon ${mic_status == 'muted' ? 'muted' : ''}" :text "${mic_status == 'muted' ? '󰍭' : ''}"))
+                (scale :class "dash-slider mic-slider" :orientation "h" :hexpand true :value {mic_volume != "" ? mic_volume : 0} :min 0 :max 100 :onchange "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ {}% &")
+                (label :class "slider-value" :text "${mic_volume}%")))
+
+        ;; --- Media ---
+        (box :class "dash-section media" :orientation "h" :space-evenly false :spacing 12 :visible {music != "" && music.status != "Stopped"}
+            (box :class "dash-media-art" :style "background-image: url('${music.cover}');")
+            (box :orientation "v" :space-evenly false :spacing 4 :hexpand true :valign "center"
+                (label :class "dash-media-title" :text "${music.title}" :limit-width 24 :halign "start")
+                (label :class "dash-media-artist" :text "${music.artist}" :limit-width 24 :halign "start")
+                (box :orientation "h" :spacing 12 :halign "start" :valign "center"
+                    (eventbox :cursor "pointer" :onclick "playerctl previous" (label :class "media-btn" :text ""))
+                    (eventbox :cursor "pointer" :onclick "playerctl play-pause" (label :class "media-btn primary" :text "${music.status == 'Playing' ? '' : ''}"))
+                    (eventbox :cursor "pointer" :onclick "playerctl next" (label :class "media-btn" :text "")))))
 
         ;; --- Power menu ---
-        (box :class "dash-section power-row" :orientation "h" :space-evenly true
-            (power_btn :icon "" :tooltip "Lock" :onclick "hyprlock &")
-            (power_btn :icon "" :tooltip "Suspend" :onclick "systemctl suspend")
-            (power_btn :icon "" :tooltip "Logout" :onclick "hyprctl dispatch 'hl.dsp.exit()'")
-            (power_btn :icon "" :tooltip "Reboot" :onclick "systemctl reboot")
-            (power_btn :icon "" :tooltip "Shutdown" :onclick "systemctl poweroff"))))
-
-;; ============================================================
-;;                        DASHBOARD WINDOW
-;; ============================================================
+        (box :class "dash-section power-row" :orientation "h" :space-evenly true :spacing 0
+            (power_btn :icon "" :tooltip "Lock" :onclick "hyprlock &")
+            (power_btn :icon "󰒲" :tooltip "Suspend" :onclick "systemctl suspend")
+            (power_btn :icon "󰍃" :tooltip "Logout" :onclick "hyprctl dispatch exit &")
+            (power_btn :icon "󰜉" :tooltip "Reboot" :onclick "systemctl reboot")
+            (power_btn :icon "󰐥" :tooltip "Shutdown" :onclick "systemctl poweroff"))))
 
 (defwindow dashboard
     :monitor 0
-    :geometry (geometry :x "10px" :y "35px" :width "300px" :height "480px" :anchor "bottom right")
+    :geometry (geometry :x "12px" :y "36px" :width "390px" :anchor "bottom right")
     :stacking "fg"
     :windowtype "dialog"
+    :exclusive false
     (dashboard_widget))
